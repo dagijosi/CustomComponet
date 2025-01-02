@@ -1,43 +1,25 @@
 import React from "react";
 
-export interface ComponentData {
-  type:
-    | "button"
-    | "input"
-    | "link"
-    | "image"
-    | "div"
-    | "p"
-    | "span"
-    | "h1"
-    | "h2"
-    | "h3"
-    | "ul"
-    | "ol"
-    | "li"
-    | "textarea"
-    | "select"
-    | "card"
-    | "alert"
-    | "badge"
-    | "section"
-    | "toggle"
-    | "radio"
-    | "checkbox";
-  id: string;
-  props: {
+export interface ComponentProps {
     text?: string;
-    href?: string;
-    src?: string;
+    children?: string;
     style?: React.CSSProperties;
     className?: string;
-    children?: ComponentData[];
-    placeholder?: string;
-    type?: string;
-    onClick?: () => void;
+    icon?: string;
+    href?: string;
+    src?: string;
     alt?: string;
-    options?: string[]; // For select component
-    icon?: string; // For adding icons
-    gradient?: string; // For gradient backgrounds
-  };
+    type?: string;
+    placeholder?: string;
+    options?: string[];
+    checked?: boolean;
+    name?: string;
+    title?: string;
+    alertType?: 'error' | 'success' | 'warning' | 'info';
+}
+
+export interface ComponentData {
+    id: string;
+    type: string;
+    props: ComponentProps;
 }

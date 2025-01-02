@@ -25,6 +25,36 @@ const generateTailwindCode = (component: ComponentData): string => {
             return `<textarea placeholder="${component.props.placeholder}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.text}</textarea>`;
         case 'select':
             return `<select style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.options?.map(option => `<option>${option}</option>`).join('')}</select>`;
+        case 'card':
+            return `<div className="p-6 bg-white rounded-lg border shadow-sm hover:shadow-lg transition-shadow ${component.props.className || ''}">${component.props.text}${component.props.children ? `\n  ${component.props.children}` : ''}</div>`;
+        case 'alert':
+            const getAlertClasses = () => {
+                const style = component.props.style || {};
+                return `${style.backgroundColor ? `bg-[${style.backgroundColor}]` : ''} ${style.color ? `text-[${style.color}]` : ''} ${style.borderColor ? `border-[${style.borderColor}]` : ''}`;
+            };
+            
+            return `<div className="p-4 rounded-lg border ${getAlertClasses()} ${component.props.className || ''}">${component.props.text}</div>`;
+        case 'badge':
+            return `<span className="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800 ${component.props.className || ''}">${component.props.text}</span>`;
+        case 'checkbox':
+            return `<label className="flex items-center gap-2 ${component.props.className || ''}">
+  <input type="checkbox" ${component.props.checked ? 'checked' : ''} className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"/>
+  <span>${component.props.text}</span>
+</label>`;
+        case 'radio':
+            return `<label className="flex items-center gap-2 ${component.props.className || ''}">
+  <input type="radio" name="${component.props.name || 'radio-group'}" ${component.props.checked ? 'checked' : ''} className="border-gray-300 text-blue-600 focus:ring-blue-500"/>
+  <span>${component.props.text}</span>
+</label>`;
+        case 'toggle':
+            return `<button className="relative w-11 h-6 rounded-full transition-colors ${component.props.checked ? 'bg-blue-600' : 'bg-gray-200'} ${component.props.className || ''}">
+  <span className="absolute w-5 h-5 bg-white rounded-full transform transition-transform ${component.props.checked ? 'translate-x-5' : 'translate-x-1'} top-0.5"></span>
+</button>`;
+        case 'section':
+            return `<section className="p-8 bg-gray-50 rounded-xl border ${component.props.className || ''}">
+  ${component.props.title ? `<h3 className="text-lg font-semibold mb-2">${component.props.title}</h3>` : ''}
+  ${component.props.text}${component.props.children ? `\n  ${component.props.children}` : ''}
+</section>`;
         default:
             return '';
     }
@@ -54,6 +84,50 @@ const generateNormalCode = (component: ComponentData): string => {
             return `<textarea placeholder="${component.props.placeholder}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.text}</textarea>`;
         case 'select':
             return `<select style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.options?.map(option => `<option>${option}</option>`).join('')}</select>`;
+        case 'card':
+            return `<div style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${component.props.text}${component.props.children ? `\n  ${component.props.children}` : ''}</div>`;
+        case 'alert':
+            return `<div style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${component.props.text}</div>`;
+        case 'badge':
+            return `<span style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${component.props.text}</span>`;
+        case 'checkbox':
+            return `<label style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">
+  <input type="checkbox" ${component.props.checked ? 'checked' : ''} style={{ marginRight: '0.5rem' }}/>
+  <span>${component.props.text}</span>
+</label>`;
+        case 'radio':
+            return `<label style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">
+  <input type="radio" name="${component.props.name || 'radio-group'}" ${component.props.checked ? 'checked' : ''} style={{ marginRight: '0.5rem' }}/>
+  <span>${component.props.text}</span>
+</label>`;
+        case 'toggle':
+            return `<button 
+  style={{
+    ...${JSON.stringify(component.props.style)},
+    position: 'relative',
+    width: '44px',
+    height: '24px',
+    backgroundColor: ${component.props.checked ? "'#2563EB'" : "'#E5E7EB'"},
+    borderRadius: '9999px',
+    transition: 'background-color 0.2s'
+  }} 
+  className="${component.props.className || ''}">
+  <span style={{
+    position: 'absolute',
+    width: '20px',
+    height: '20px',
+    backgroundColor: 'white',
+    borderRadius: '50%',
+    transition: 'transform 0.2s',
+    transform: ${component.props.checked ? "'translateX(20px)'" : "'translateX(2px)'"},
+    top: '2px'
+  }}/>
+</button>`;
+        case 'section':
+            return `<section style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">
+  ${component.props.title ? `<h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '0.5rem' }}>${component.props.title}</h3>` : ''}
+  ${component.props.text}${component.props.children ? `\n  ${component.props.children}` : ''}
+</section>`;
         default:
             return '';
     }

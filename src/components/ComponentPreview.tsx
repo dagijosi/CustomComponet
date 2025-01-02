@@ -58,6 +58,81 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
                         ))}
                     </select>
                 );
+            case 'card':
+                return (
+                    <div style={props.style} className={props.className}>
+                        {props.icon && <i className={props.icon}></i>}
+                        {props.text}
+                        {props.children}
+                    </div>
+                );
+            case 'alert':
+                return (
+                    <div style={props.style} className={props.className}>
+                        {props.icon && <i className={props.icon}></i>}
+                        {props.text}
+                    </div>
+                );
+            case 'badge':
+                return (
+                    <span style={props.style} className={props.className}>
+                        {props.text}
+                    </span>
+                );
+            case 'checkbox':
+                return (
+                    <label style={props.style} className={props.className}>
+                        <input 
+                            type="checkbox" 
+                            className="mr-2"
+                            defaultChecked={props.checked}
+                        />
+                        {props.text}
+                    </label>
+                );
+            case 'radio':
+                return (
+                    <label style={props.style} className={props.className}>
+                        <input 
+                            type="radio" 
+                            className="mr-2"
+                            name={props.name || 'radio-group'}
+                            defaultChecked={props.checked}
+                        />
+                        {props.text}
+                    </label>
+                );
+            case 'toggle':
+                return (
+                    <button 
+                        style={{
+                            ...props.style,
+                            backgroundColor: props.checked ? '#3B82F6' : '#E5E7EB'
+                        }} 
+                        className={props.className}
+                    >
+                        <span 
+                            style={{
+                                position: 'absolute',
+                                width: '20px',
+                                height: '20px',
+                                backgroundColor: 'white',
+                                borderRadius: '50%',
+                                transition: 'transform 0.2s',
+                                transform: props.checked ? 'translateX(20px)' : 'translateX(2px)',
+                                top: '2px',
+                            }}
+                        />
+                    </button>
+                );
+            case 'section':
+                return (
+                    <section style={props.style} className={props.className}>
+                        {props.title && <h3 className="text-lg font-semibold mb-2">{props.title}</h3>}
+                        {props.text}
+                        {props.children}
+                    </section>
+                );
             default:
                 return null;
         }

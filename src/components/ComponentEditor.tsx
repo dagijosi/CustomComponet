@@ -3,8 +3,8 @@ import { ComponentData } from '../types';
 import GradientPicker from './GradientPicker';
 import { FiSearch } from 'react-icons/fi';
 import ComponentPreview from './ComponentPreview';
-import ColorPickerButton from './ColorPickerButton';
 import SpacingControl from './SpacingControl';
+import StyleControls from './StyleControls';
 
 interface ComponentEditorProps {
     component: ComponentData;
@@ -13,49 +13,51 @@ interface ComponentEditorProps {
 }
 
 // type CSSSpacingProperty = 'margin' | 'padding';
-type CSSSpacingSide = 'Top' | 'Right' | 'Bottom' | 'Left';
-// type CSSSpacingKey = `${CSSSpacingProperty}${CSSSpacingSide}`;
+// type CSSSpacingSide = 'Top' | 'Right' | 'Bottom' | 'Left';
+// // type CSSSpacingKey = `${CSSSpacingProperty}${CSSSpacingSide}`;
 
-const applySpacingPreset = (
-    preset: 'equal' | 'content' | 'reset',
-    currentStyle: React.CSSProperties
-): React.CSSProperties => {
-    const style = { ...currentStyle };
-    const sides: CSSSpacingSide[] = ['Top', 'Right', 'Bottom', 'Left'];
+// const applySpacingPreset = (
+//     preset: 'equal' | 'content' | 'reset',
+//     currentStyle: React.CSSProperties
+// ): React.CSSProperties => {
+//     const style = { ...currentStyle };
+//     const sides: CSSSpacingSide[] = ['Top', 'Right', 'Bottom', 'Left'];
 
-    switch (preset) {
-        case 'equal':
-            sides.forEach(side => {
-                (style as any)[`margin${side}`] = '16px';
-                (style as any)[`padding${side}`] = '16px';
-            });
-            break;
-        case 'content':
-            sides.filter(side => side === 'Top' || side === 'Bottom').forEach(side => {
-                (style as any)[`margin${side}`] = '16px';
-                (style as any)[`padding${side}`] = '8px';
-            });
-            sides.filter(side => side === 'Right' || side === 'Left').forEach(side => {
-                (style as any)[`margin${side}`] = '32px';
-                (style as any)[`padding${side}`] = '16px';
-            });
-            break;
-        case 'reset':
-            sides.forEach(side => {
-                (style as any)[`margin${side}`] = '0px';
-                (style as any)[`padding${side}`] = '0px';
-            });
-            break;
-    }
-    return style;
-};
+//     switch (preset) {
+//         case 'equal':
+//             sides.forEach(side => {
+//                 (style as any)[`margin${side}`] = '16px';
+//                 (style as any)[`padding${side}`] = '16px';
+//             });
+//             break;
+//         case 'content':
+//             sides.filter(side => side === 'Top' || side === 'Bottom').forEach(side => {
+//                 (style as any)[`margin${side}`] = '16px';
+//                 (style as any)[`padding${side}`] = '8px';
+//             });
+//             sides.filter(side => side === 'Right' || side === 'Left').forEach(side => {
+//                 (style as any)[`margin${side}`] = '32px';
+//                 (style as any)[`padding${side}`] = '16px';
+//             });
+//             break;
+//         case 'reset':
+//             sides.forEach(side => {
+//                 (style as any)[`margin${side}`] = '0px';
+//                 (style as any)[`padding${side}`] = '0px';
+//             });
+//             break;
+//     }
+//     return style;
+// };
 
 const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, onDelete }) => {
     const [localProps, setLocalProps] = useState(component.props);
     const [useGradient, setUseGradient] = useState(false);
+    const [activeTab, setActiveTab] = useState<'content' | 'style' | 'spacing'>('content');
 
     const handleChange = (
-        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+        event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement> | 
+        { target: { name: string; value: any } }
     ) => {
         const { name, value } = event.target;
         const newProps = { ...localProps, [name]: value };
@@ -206,17 +208,124 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
                         rows={5}
                     />
                 );
-            default:
+            case 'card':
+                return (
+                    <>
+                        <input
+                            type="text"
+                            name="text"
+                            value={localProps.text || ''}
+                            onChange={handleChange}
+                            placeholder="Card Title"
+                            className="w-full p-2 border rounded mb-2"
+                        />
+                        <textarea
+                            name="children"
+                            value={localProps.children || ''}
+                            onChange={handleChange}
+                            placeholder="Card Content"
+                            className="w-full p-2 border rounded"
+                            rows={3}
+                        />
+                    </>
+                );
+            case 'alert':
+                return (
+                    <>
+                        <input
+                            type="text"
+                            name="text"
+                            value={localProps.text || ''}
+                            onChange={handleChange}
+                            placeholder="Alert Message"
+                            className="w-full p-2 border rounded mb-2"
+                        />
+                        <select
+                            name="type"
+                            value={localProps.alertType || 'error'}
+                            onChange={handleChange}
+                            className="w-full p-2 border rounded"
+                        >
+                            <option value="error">Error</option>
+                            <option value="success">Success</option>
+                            <option value="warning">Warning</option>
+                            <option value="info">Info</option>
+                        </select>
+                    </>
+                );
+            case 'badge':
                 return (
                     <input
                         type="text"
                         name="text"
                         value={localProps.text || ''}
                         onChange={handleChange}
-                        placeholder="Content"
+                        placeholder="Badge Text"
                         className="w-full p-2 border rounded"
                     />
                 );
+            case 'checkbox':
+            case 'radio':
+                return (
+                    <>
+                        <input
+                            type="text"
+                            name="text"
+                            value={localProps.text || ''}
+                            onChange={handleChange}
+                            placeholder="Label Text"
+                            className="w-full p-2 border rounded mb-2"
+                        />
+                        <label className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                name="checked"
+                                checked={localProps.checked || false}
+                                onChange={(e) => handleChange({
+                                    target: { name: 'checked', value: e.target.checked }
+                                })}
+                            />
+                            Default Checked
+                        </label>
+                    </>
+                );
+            case 'toggle':
+                return (
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            name="checked"
+                            checked={localProps.checked || false}
+                            onChange={(e) => handleChange({
+                                target: { name: 'checked', value: e.target.checked }
+                            })}
+                        />
+                        Default State
+                    </label>
+                );
+            case 'section':
+                return (
+                    <>
+                        <input
+                            type="text"
+                            name="title"
+                            value={localProps.title || ''}
+                            onChange={handleChange}
+                            placeholder="Section Title"
+                            className="w-full p-2 border rounded mb-2"
+                        />
+                        <textarea
+                            name="text"
+                            value={localProps.text || ''}
+                            onChange={handleChange}
+                            placeholder="Section Content"
+                            className="w-full p-2 border rounded"
+                            rows={3}
+                        />
+                    </>
+                );
+            default:
+                return null;
         }
     };
 
@@ -293,7 +402,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
     return (
         <div className="space-y-4">
             <div className="flex justify-between items-center">
-                <h3 className="font-bold text-lg">{component.type}</h3>
+                <h3 className="font-bold text-lg capitalize">{component.type}</h3>
                 {onDelete && (
                     <button 
                         onClick={onDelete}
@@ -309,115 +418,109 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
                 <div className="w-full lg:w-1/3">
                     <div className="lg:sticky lg:top-4">
                         <h4 className="font-semibold mb-2">Preview</h4>
-                        <div className="overflow-x-auto">
-                            <ComponentPreview component={component} />
-                        </div>
+                        <ComponentPreview component={component} />
                     </div>
                 </div>
 
                 {/* Right column - Properties */}
-                <div className="w-full lg:w-2/3 space-y-4">
-                    {/* Content Properties */}
-                    <div className="space-y-2 bg-white p-3 sm:p-4 rounded-lg border">
-                        <h4 className="font-semibold">Content</h4>
-                        {renderContentProperties()}
+                <div className="w-full lg:w-2/3">
+                    {/* Tab Navigation */}
+                    <div className="flex border-b mb-4">
+                        <button
+                            className={`px-4 py-2 font-medium text-sm ${
+                                activeTab === 'content' 
+                                    ? 'border-b-2 border-blue-500 text-blue-600' 
+                                    : 'text-gray-600'
+                            }`}
+                            onClick={() => setActiveTab('content')}
+                        >
+                            Content
+                        </button>
+                        <button
+                            className={`px-4 py-2 font-medium text-sm ${
+                                activeTab === 'style' 
+                                    ? 'border-b-2 border-blue-500 text-blue-600' 
+                                    : 'text-gray-600'
+                            }`}
+                            onClick={() => setActiveTab('style')}
+                        >
+                            Style
+                        </button>
+                        <button
+                            className={`px-4 py-2 font-medium text-sm ${
+                                activeTab === 'spacing' 
+                                    ? 'border-b-2 border-blue-500 text-blue-600' 
+                                    : 'text-gray-600'
+                            }`}
+                            onClick={() => setActiveTab('spacing')}
+                        >
+                            Spacing
+                        </button>
                     </div>
 
-                    {/* Style Properties */}
-                    <div className="space-y-4 bg-white p-3 sm:p-4 rounded-lg border">
-                        <h4 className="font-semibold">Styling</h4>
-                        
-                        {/* Background Type Toggle */}
-                        <div className="flex items-center gap-4 mb-2">
-                            <label className="flex items-center gap-2 text-sm text-gray-600">
-                                <input
-                                    type="radio"
-                                    checked={!useGradient}
-                                    onChange={() => {
-                                        setUseGradient(false);
-                                        handleBackgroundChange(localProps.style?.backgroundColor || '#ffffff');
-                                    }}
-                                    className="text-blue-500"
-                                />
-                                Solid Color
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600">
-                                <input
-                                    type="radio"
-                                    checked={useGradient}
-                                    onChange={() => setUseGradient(true)}
-                                    className="text-blue-500"
-                                />
-                                Gradient
-                            </label>
+                    {/* Content Tab */}
+                    {activeTab === 'content' && (
+                        <div className="space-y-4 bg-white p-4 rounded-lg border">
+                            {renderContentProperties()}
+                            <input
+                                type="text"
+                                name="className"
+                                value={localProps.className || ''}
+                                onChange={handleChange}
+                                placeholder="CSS Classes"
+                                className="w-full p-2 border rounded mt-4"
+                            />
                         </div>
+                    )}
 
-                        {/* Colors */}
-                        {!useGradient ? (
-                            <div className="grid grid-cols-2 gap-4">
-                                <ColorPickerButton
-                                    color={localProps.style?.backgroundColor || '#ffffff'}
-                                    onChange={handleBackgroundChange}
-                                    label="Background Color"
-                                />
-                                <ColorPickerButton
-                                    color={localProps.style?.color || '#000000'}
-                                    onChange={(color) => handleStyleChange('color', color)}
-                                    label="Text Color"
-                                />
-                            </div>
-                        ) : (
-                            <div>
-                                <div className="flex justify-between items-center mb-2">
-                                    <label className="block text-sm font-medium">Gradient</label>
-                                    <button
-                                        onClick={() => {
+                    {/* Style Tab */}
+                    {activeTab === 'style' && (
+                        <div className="space-y-4 bg-white p-4 rounded-lg border">
+                            {/* Background Type Toggle */}
+                            <div className="flex items-center gap-4 mb-2">
+                                <label className="flex items-center gap-2 text-sm text-gray-600">
+                                    <input
+                                        type="radio"
+                                        checked={!useGradient}
+                                        onChange={() => {
                                             setUseGradient(false);
                                             handleBackgroundChange(localProps.style?.backgroundColor || '#ffffff');
                                         }}
-                                        className="text-sm text-red-500 hover:text-red-700"
-                                    >
-                                        Clear Gradient
-                                    </button>
-                                </div>
+                                        className="text-blue-500"
+                                    />
+                                    Solid Color
+                                </label>
+                                <label className="flex items-center gap-2 text-sm text-gray-600">
+                                    <input
+                                        type="radio"
+                                        checked={useGradient}
+                                        onChange={() => setUseGradient(true)}
+                                        className="text-blue-500"
+                                    />
+                                    Gradient
+                                </label>
+                            </div>
+
+                            {useGradient ? (
                                 <GradientPicker
                                     value={localProps.style?.background?.toString() || ''}
                                     onChange={handleGradientChange}
                                 />
-                            </div>
-                        )}
+                            ) : (
+                                <StyleControls 
+                                    style={localProps.style || {}}
+                                    onStyleChange={handleStyleChange}
+                                />
+                            )}
 
-                        {/* Component-specific style properties */}
-                        {renderSpecificStyleProperties()}
-
-                        {/* Common style properties */}
-                        <div className="grid grid-cols-2 gap-2 mt-4">
-                            <input
-                                type="text"
-                                placeholder="Border Radius"
-                                value={localProps.style?.borderRadius || ""}
-                                onChange={(e) => handleStyleChange("borderRadius", e.target.value)}
-                                className="p-2 border rounded"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Width"
-                                value={localProps.style?.width || ""}
-                                onChange={(e) => handleStyleChange("width", e.target.value)}
-                                className="p-2 border rounded"
-                            />
-                            <input
-                                type="text"
-                                placeholder="Height"
-                                value={localProps.style?.height || ""}
-                                onChange={(e) => handleStyleChange("height", e.target.value)}
-                                className="p-2 border rounded"
-                            />
+                            {/* Component-specific style properties */}
+                            {renderSpecificStyleProperties()}
                         </div>
+                    )}
 
-                        {/* Spacing Controls */}
-                        <div className="mt-4 space-y-4">
-                            <h5 className="font-medium text-sm">Spacing</h5>
+                    {/* Spacing Tab */}
+                    {activeTab === 'spacing' && (
+                        <div className="space-y-4 bg-white p-4 rounded-lg border">
                             <div className="grid grid-cols-2 gap-4">
                                 <SpacingControl
                                     type="margin"
@@ -440,57 +543,8 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
                                     onChange={handleStyleChange}
                                 />
                             </div>
-                            {/* Quick presets */}
-                            <div className="flex gap-2 flex-wrap">
-                                <button
-                                    onClick={() => {
-                                        const newStyle = applySpacingPreset('equal', localProps.style || {});
-                                        const newProps = { ...localProps, style: newStyle };
-                                        setLocalProps(newProps);
-                                        onChange(newProps);
-                                    }}
-                                    className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
-                                >
-                                    Equal Spacing (16px)
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        const newStyle = applySpacingPreset('content', localProps.style || {});
-                                        const newProps = { ...localProps, style: newStyle };
-                                        setLocalProps(newProps);
-                                        onChange(newProps);
-                                    }}
-                                    className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
-                                >
-                                    Content Layout
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        const newStyle = applySpacingPreset('reset', localProps.style || {});
-                                        const newProps = { ...localProps, style: newStyle };
-                                        setLocalProps(newProps);
-                                        onChange(newProps);
-                                    }}
-                                    className="px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded"
-                                >
-                                    Reset Spacing
-                                </button>
-                            </div>
                         </div>
-                    </div>
-
-                    {/* Additional Properties */}
-                    <div className="space-y-2 bg-white p-3 sm:p-4 rounded-lg border">
-                        <h4 className="font-semibold">Additional Properties</h4>
-                        <input
-                            type="text"
-                            name="className"
-                            value={localProps.className || ''}
-                            onChange={handleChange}
-                            placeholder="CSS Classes"
-                            className="w-full p-2 border rounded"
-                        />
-                    </div>
+                    )}
                 </div>
             </div>
         </div>
