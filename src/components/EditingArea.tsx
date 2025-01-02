@@ -32,18 +32,18 @@ const EditingArea: React.FC<EditingAreaProps> = ({ components, onComponentsChang
     };
 
     return (
-        <div className="p-4 border rounded-lg shadow-sm bg-white">
-            <h2 className="text-xl font-bold mb-4">Editing Area</h2>
+        <div className="p-2 sm:p-4 border rounded-lg bg-white dark:bg-gray-800 overflow-hidden">
+            <h2 className="text-lg font-bold mb-2">Editing Area</h2>
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="components">
                     {(provided) => (
                         <div 
                             {...provided.droppableProps} 
                             ref={provided.innerRef} 
-                            className="min-h-[200px] border-2 border-dashed border-gray-300 p-4 rounded-lg"
+                            className="min-h-[200px] border-2 border-dashed border-gray-300 dark:border-gray-600 p-2 sm:p-4 rounded-lg overflow-y-auto max-h-[calc(100vh-200px)]"
                         >
                             {components.length === 0 && (
-                                <div className="text-gray-400 text-center py-8">
+                                <div className="text-gray-400 dark:text-gray-500 text-center py-8">
                                     Drag components here
                                 </div>
                             )}
@@ -54,7 +54,7 @@ const EditingArea: React.FC<EditingAreaProps> = ({ components, onComponentsChang
                                             ref={provided.innerRef}
                                             {...provided.draggableProps}
                                             {...provided.dragHandleProps}
-                                            className="border rounded-lg p-4 mb-4 bg-gray-50 shadow-sm"
+                                            className="border rounded-lg p-4 mb-4 bg-gray-50 dark:bg-gray-700 shadow-sm"
                                         >
                                             <ComponentEditor 
                                                 component={component} 

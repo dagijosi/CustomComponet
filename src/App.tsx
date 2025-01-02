@@ -36,7 +36,7 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+    <div className={`min-h-screen flex flex-col ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b sticky top-0 z-50">
         <div className="container mx-auto px-4">
@@ -134,15 +134,16 @@ function App() {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="flex-1 container mx-auto px-2 sm:px-4 py-6 relative max-w-full">
         {!showCode ? (
-          <div className="relative flex flex-col md:flex-row gap-6">
-            {/* Mobile sidebar toggle */}
+          <div className="relative flex flex-col md:flex-row gap-6 h-full">
+            {/* Mobile sidebar toggle - moved inside main content */}
             <button
               onClick={() => setShowSidebar(!showSidebar)}
-              className="md:hidden fixed bottom-4 right-4 z-50 bg-blue-500 text-white p-4 rounded-full shadow-lg"
+              className="md:hidden fixed bottom-6 right-4 z-50 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 active:bg-blue-700 transition-colors"
+              style={{ transform: 'translateX(-8px)' }}
             >
-              <FiPlus size={24} />
+              <FiPlus size={20} />
             </button>
 
             {/* Left Sidebar - Component Palette */}
@@ -150,13 +151,17 @@ function App() {
               fixed md:static inset-0 z-40 bg-gray-50 dark:bg-gray-900 md:bg-transparent
               w-full md:w-64 flex-shrink-0 transform transition-transform duration-300
               ${showSidebar ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+              md:h-auto overflow-auto
             `}>
-              <div className="h-full overflow-y-auto p-4 md:p-0">
+              <div className="h-full overflow-y-auto p-4 md:p-0 pb-20 md:pb-0">
                 <div className="sticky top-24">
                   <div className="flex justify-between items-center md:hidden mb-4">
                     <h2 className="text-lg font-semibold">Components</h2>
-                    <button onClick={() => setShowSidebar(false)}>
-                      <i className="fas fa-times"></i>
+                    <button 
+                      onClick={() => setShowSidebar(false)}
+                      className="p-2 text-gray-500 hover:text-gray-700"
+                    >
+                      <HiX size={24} />
                     </button>
                   </div>
                   <ComponentPalette onAddComponent={(component) => {
@@ -168,7 +173,7 @@ function App() {
             </div>
 
             {/* Main Content - Editing Area */}
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <EditingArea 
                 components={components} 
                 onComponentsChange={handleComponentsChange}
@@ -176,14 +181,14 @@ function App() {
             </div>
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-4 md:p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-3 md:p-6">
             <CodeOutput components={components} />
           </div>
         )}
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-gray-800 border-t py-4 mt-8">
+      <footer className="bg-white dark:bg-gray-800 border-t py-4 mt-auto">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 text-center md:text-left">

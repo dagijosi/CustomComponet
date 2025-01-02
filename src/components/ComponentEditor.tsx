@@ -481,20 +481,22 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
                 <div className="w-full lg:w-1/3">
                     <div className="lg:sticky lg:top-4">
                         <h4 className="font-semibold mb-2">Preview</h4>
-                        <ComponentPreview component={component} />
+                        <div className="overflow-x-auto">
+                            <ComponentPreview component={component} />
+                        </div>
                     </div>
                 </div>
 
                 {/* Right column - Properties */}
                 <div className="w-full lg:w-2/3 space-y-4">
                     {/* Content Properties */}
-                    <div className="space-y-2 bg-white p-4 rounded-lg border">
+                    <div className="space-y-2 bg-white p-3 sm:p-4 rounded-lg border">
                         <h4 className="font-semibold">Content</h4>
                         {renderContentProperties()}
                     </div>
 
                     {/* Style Properties */}
-                    <div className="space-y-4 bg-white p-4 rounded-lg border">
+                    <div className="space-y-4 bg-white p-3 sm:p-4 rounded-lg border">
                         <h4 className="font-semibold">Styling</h4>
                         
                         {/* Background Type Toggle */}
@@ -650,7 +652,7 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
                     </div>
 
                     {/* Additional Properties */}
-                    <div className="space-y-2 bg-white p-4 rounded-lg border">
+                    <div className="space-y-2 bg-white p-3 sm:p-4 rounded-lg border">
                         <h4 className="font-semibold">Additional Properties</h4>
                         <input
                             type="text"

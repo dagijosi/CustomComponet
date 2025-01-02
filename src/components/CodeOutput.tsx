@@ -61,7 +61,7 @@ const generateNormalCode = (component: ComponentData): string => {
 
 const CodeOutput: React.FC<{ components: ComponentData[] }> = ({ components }) => {
     const [copied, setCopied] = useState(false);
-    const [useTailwind, setUseTailwind] = useState(false);
+    const [useTailwind] = useState(false);
     
     const code = components.map(useTailwind ? generateTailwindCode : generateNormalCode).join('\n');
 

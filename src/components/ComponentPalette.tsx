@@ -223,9 +223,9 @@ const ComponentPalette: React.FC<{ onAddComponent: (component: ComponentData) =>
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-3 sm:p-4">
       <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Components</h2>
-      <div className="space-y-6">
+      <div className="space-y-4">
         {Object.entries(componentCategories).map(([category, types]) => (
           <div key={category}>
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{category}</h3>
