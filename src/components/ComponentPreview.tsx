@@ -1,5 +1,11 @@
 import React from 'react';
 import { ComponentData } from '../types';
+import * as FiIcons from 'react-icons/fi';
+import * as AiIcons from 'react-icons/ai';
+import * as BiIcons from 'react-icons/bi';
+import * as BsIcons from 'react-icons/bs';
+import * as HiIcons from 'react-icons/hi';
+import * as MdIcons from 'react-icons/md';
 
 const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component }) => {
     const renderComponent = () => {
@@ -9,8 +15,13 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
             case 'button':
                 return (
                     <button style={props.style} className={props.className}>
-                        {props.icon && <i className={props.icon}></i>}
+                        {props.iconPosition !== 'right' && IconComponent && 
+                            <IconComponent size={props.iconSize || 16} className="inline-block mr-2" />
+                        }
                         {props.text}
+                        {props.iconPosition === 'right' && IconComponent && 
+                            <IconComponent size={props.iconSize || 16} className="inline-block ml-2" />
+                        }
                     </button>
                 );
             case 'input':
@@ -25,8 +36,13 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
             case 'link':
                 return (
                     <a href={props.href} style={props.style} className={props.className}>
-                        {props.icon && <i className={props.icon}></i>}
+                        {props.iconPosition !== 'right' && IconComponent && 
+                            <IconComponent size={props.iconSize || 16} className="inline-block mr-2" />
+                        }
                         {props.text}
+                        {props.iconPosition === 'right' && IconComponent && 
+                            <IconComponent size={props.iconSize || 16} className="inline-block ml-2" />
+                        }
                     </a>
                 );
             case 'image':
@@ -61,7 +77,7 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
             case 'card':
                 return (
                     <div style={props.style} className={props.className}>
-                        {props.icon && <i className={props.icon}></i>}
+                        {IconComponent && <IconComponent className="inline-block mr-2" />}
                         {props.text}
                         {props.children}
                     </div>
@@ -69,7 +85,7 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
             case 'alert':
                 return (
                     <div style={props.style} className={props.className}>
-                        {props.icon && <i className={props.icon}></i>}
+                        {IconComponent && <IconComponent className="inline-block mr-2" />}
                         {props.text}
                     </div>
                 );
@@ -137,6 +153,28 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
                 return null;
         }
     };
+
+    const getIconComponent = (iconName: string) => {
+        const iconSets = {
+            'Fi': FiIcons,
+            'Ai': AiIcons,
+            'Bi': BiIcons,
+            'Bs': BsIcons,
+            'Hi': HiIcons,
+            'Md': MdIcons,
+        };
+        
+        if (!iconName) return null;
+        
+        const prefix = iconName.substring(0, 2);
+        const iconSet = iconSets[prefix as keyof typeof iconSets];
+        
+        if (!iconSet) return null;
+        
+        return (iconSet as any)[iconName];
+    };
+
+    const IconComponent = component.props.icon ? getIconComponent(component.props.icon) : null;
 
     return (
         <div className="preview-container border rounded p-4 bg-white">

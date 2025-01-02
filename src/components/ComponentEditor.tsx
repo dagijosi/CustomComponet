@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { ComponentData } from '../types';
 import GradientPicker from './GradientPicker';
-import { FiSearch } from 'react-icons/fi';
+
 import ComponentPreview from './ComponentPreview';
 import SpacingControl from './SpacingControl';
 import StyleControls from './StyleControls';
+import IconSearch from './IconSearch';
 
 interface ComponentEditorProps {
     component: ComponentData;
@@ -100,19 +101,22 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
                             value={localProps.text || ''}
                             onChange={handleChange}
                             placeholder={`${component.type === 'button' ? 'Button' : 'Link'} Text`}
-                            className="w-full p-2 border rounded"
+                            className="w-full p-2 border rounded mb-2"
                         />
-                        <div className="relative mt-2">
-                            <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                            <input
-                                type="text"
-                                name="icon"
-                                value={localProps.icon || ''}
-                                onChange={handleChange}
-                                placeholder="Search for an icon..."
-                                className="w-full p-2 pl-10 border rounded"
-                            />
-                        </div>
+                        <IconSearch
+                            value={localProps.icon || ''}
+                            onChange={(iconName) => handleChange({
+                                target: { name: 'icon', value: iconName }
+                            })}
+                            position={localProps.iconPosition || 'left'}
+                            onPositionChange={(position) => handleChange({
+                                target: { name: 'iconPosition', value: position }
+                            })}
+                            size={localProps.iconSize || 16}
+                            onSizeChange={(size) => handleChange({
+                                target: { name: 'iconSize', value: size }
+                            })}
+                        />
                     </>
                 );
             case 'input':

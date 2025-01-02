@@ -16,6 +16,8 @@ export interface ComponentProps {
     name?: string;
     title?: string;
     alertType?: 'error' | 'success' | 'warning' | 'info';
+    iconPosition?: 'left' | 'right';
+    iconSize?: number;
 }
 
 export interface ComponentData {
