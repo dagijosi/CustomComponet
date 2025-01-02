@@ -1,7 +1,29 @@
-import React from 'react';
+import React from "react";
 
 export interface ComponentData {
-  type: 'button' | 'input' | 'link' | 'image' | 'div' | 'p' | 'span' | 'h1' | 'h2' | 'h3' | 'ul' | 'ol' | 'li' | 'textarea' | 'select';
+  type:
+    | "button"
+    | "input"
+    | "link"
+    | "image"
+    | "div"
+    | "p"
+    | "span"
+    | "h1"
+    | "h2"
+    | "h3"
+    | "ul"
+    | "ol"
+    | "li"
+    | "textarea"
+    | "select"
+    | "card"
+    | "alert"
+    | "badge"
+    | "section"
+    | "toggle"
+    | "radio"
+    | "checkbox";
   id: string;
   props: {
     text?: string;

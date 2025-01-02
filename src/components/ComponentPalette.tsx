@@ -9,6 +9,13 @@ import {
   FiAlignLeft, 
   FiList,
   FiChevronDown,
+  FiCreditCard,
+  FiAlertCircle,
+  FiTag,
+  FiCheckSquare,
+  FiToggleLeft,
+  FiRadio,
+  FiLayout
 } from 'react-icons/fi';
 
 const getIconForComponent = (type: string) => {
@@ -36,6 +43,20 @@ const getIconForComponent = (type: string) => {
       return <FiType {...iconProps} size={20} />;
     case 'ul':
       return <FiList {...iconProps} />;
+    case 'card':
+      return <FiCreditCard {...iconProps} />;
+    case 'alert':
+      return <FiAlertCircle {...iconProps} />;
+    case 'badge':
+      return <FiTag {...iconProps} />;
+    case 'checkbox':
+      return <FiCheckSquare {...iconProps} />;
+    case 'toggle':
+      return <FiToggleLeft {...iconProps} />;
+    case 'radio':
+      return <FiRadio {...iconProps} />;
+    case 'section':
+      return <FiLayout {...iconProps} />;
     default:
       return <FiBox {...iconProps} />;
   }
@@ -211,21 +232,128 @@ const ComponentPalette: React.FC<{ onAddComponent: (component: ComponentData) =>
         },
         className: 'tracking-tight',
       }
+    },
+    {
+      type: 'card',
+      id: 'card-1',
+      props: {
+        text: 'Card Content',
+        style: {
+          padding: '24px',
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          border: '1px solid #E5E7EB',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        },
+        className: 'hover:shadow-lg transition-shadow',
+      }
+    },
+    {
+      type: 'alert',
+      id: 'alert-1',
+      props: {
+        text: 'This is an important message!',
+        style: {
+          padding: '16px',
+          backgroundColor: '#FEF2F2',
+          color: '#991B1B',
+          borderRadius: '8px',
+          border: '1px solid #FEE2E2',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+        },
+        className: 'text-sm',
+      }
+    },
+    {
+      type: 'badge',
+      id: 'badge-1',
+      props: {
+        text: 'New',
+        style: {
+          padding: '2px 8px',
+          backgroundColor: '#EFF6FF',
+          color: '#1D4ED8',
+          borderRadius: '9999px',
+          fontSize: '12px',
+          fontWeight: '500',
+        },
+        className: 'inline-block',
+      }
+    },
+    {
+      type: 'checkbox',
+      id: 'checkbox-1',
+      props: {
+        text: 'Check me',
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          cursor: 'pointer',
+        },
+        className: 'text-sm text-gray-700',
+      }
+    },
+    {
+      type: 'radio',
+      id: 'radio-1',
+      props: {
+        text: 'Select me',
+        style: {
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          cursor: 'pointer',
+        },
+        className: 'text-sm text-gray-700',
+      }
+    },
+    {
+      type: 'toggle',
+      id: 'toggle-1',
+      props: {
+        style: {
+          width: '44px',
+          height: '24px',
+          backgroundColor: '#E5E7EB',
+          borderRadius: '9999px',
+          position: 'relative',
+          cursor: 'pointer',
+        },
+        className: 'transition-colors',
+      }
+    },
+    {
+      type: 'section',
+      id: 'section-1',
+      props: {
+        text: 'Section Content',
+        style: {
+          padding: '32px',
+          backgroundColor: '#F9FAFB',
+          borderRadius: '16px',
+          border: '1px solid #E5E7EB',
+        },
+        className: 'space-y-4',
+      }
     }
   ];
 
   // Group components by category
   const componentCategories = {
-    'Form Elements': ['button', 'input', 'textarea', 'select'],
+    'Form Elements': ['button', 'input', 'textarea', 'select', 'checkbox', 'radio', 'toggle'],
     'Typography': ['p', 'h1', 'h2', 'link'],
-    'Layout': ['div', 'ul'],
+    'Layout': ['div', 'section', 'card'],
     'Media': ['image'],
+    'Feedback': ['alert', 'badge'],
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-3 sm:p-4">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border dark:border-gray-700 p-3 sm:p-4 h-[calc(100vh-11rem)] flex flex-col">
       <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">Components</h2>
-      <div className="space-y-4">
+      <div className="space-y-4 overflow-y-auto flex-1 pr-2">
         {Object.entries(componentCategories).map(([category, types]) => (
           <div key={category}>
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-2">{category}</h3>
