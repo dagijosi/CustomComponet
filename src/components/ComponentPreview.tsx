@@ -8,8 +8,29 @@ import * as HiIcons from 'react-icons/hi';
 import * as MdIcons from 'react-icons/md';
 
 const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component }) => {
+    const getIconComponent = (iconName: string) => {
+        const iconSets = {
+            'Fi': FiIcons,
+            'Ai': AiIcons,
+            'Bi': BiIcons,
+            'Bs': BsIcons,
+            'Hi': HiIcons,
+            'Md': MdIcons,
+        };
+        
+        if (!iconName) return null;
+        
+        const prefix = iconName.substring(0, 2);
+        const iconSet = iconSets[prefix as keyof typeof iconSets];
+        
+        if (!iconSet) return null;
+        
+        return (iconSet as any)[iconName];
+    };
+
     const renderComponent = () => {
         const { type, props } = component;
+        const IconComponent = props.icon ? getIconComponent(props.icon) : null;
         
         switch (type) {
             case 'button':
@@ -153,28 +174,6 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
                 return null;
         }
     };
-
-    const getIconComponent = (iconName: string) => {
-        const iconSets = {
-            'Fi': FiIcons,
-            'Ai': AiIcons,
-            'Bi': BiIcons,
-            'Bs': BsIcons,
-            'Hi': HiIcons,
-            'Md': MdIcons,
-        };
-        
-        if (!iconName) return null;
-        
-        const prefix = iconName.substring(0, 2);
-        const iconSet = iconSets[prefix as keyof typeof iconSets];
-        
-        if (!iconSet) return null;
-        
-        return (iconSet as any)[iconName];
-    };
-
-    const IconComponent = component.props.icon ? getIconComponent(component.props.icon) : null;
 
     return (
         <div className="preview-container border rounded p-4 bg-white">

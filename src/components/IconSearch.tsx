@@ -1,10 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import * as FiIcons from 'react-icons/fi';
-import * as AiIcons from 'react-icons/ai';
-import * as BiIcons from 'react-icons/bi';
-import * as BsIcons from 'react-icons/bs';
-import * as HiIcons from 'react-icons/hi';
-import * as MdIcons from 'react-icons/md';
 import { IconType } from 'react-icons';
 import { FiSearch, FiLoader } from 'react-icons/fi';
 
@@ -30,38 +24,41 @@ const IconSearch: React.FC<IconSearchProps> = ({
     const [icons, setIcons] = useState<{ name: string; component: IconType }[]>([]);
     const [filteredIcons, setFilteredIcons] = useState<{ name: string; component: IconType }[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [currentIconSet, setCurrentIconSet] = useState<string>('Fi');
 
+    const iconSets = {
+        'Fi': () => import('react-icons/fi'),
+        'Ai': () => import('react-icons/ai'),
+        'Bi': () => import('react-icons/bi'),
+        'Bs': () => import('react-icons/bs'),
+        'Hi': () => import('react-icons/hi'),
+        'Md': () => import('react-icons/md'),
+    };
+
+    // Load initial icon set (FiIcons)
     useEffect(() => {
-        const loadIcons = async () => {
-            setIsLoading(true);
-            // Simulate loading delay
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            const iconSets = [
-                { prefix: 'Fi', icons: FiIcons },
-                { prefix: 'Ai', icons: AiIcons },
-                { prefix: 'Bi', icons: BiIcons },
-                { prefix: 'Bs', icons: BsIcons },
-                { prefix: 'Hi', icons: HiIcons },
-                { prefix: 'Md', icons: MdIcons },
-            ];
-
-            const allIcons = iconSets.flatMap(({ prefix, icons }) =>
-                Object.entries(icons)
-                    .filter(([name]) => name !== 'default')
-                    .map(([name, component]) => ({
-                        name: `${prefix}${name}`,
-                        component: component as IconType
-                    }))
-            );
-
-            setIcons(allIcons);
-            setFilteredIcons(allIcons);
-            setIsLoading(false);
-        };
-
-        loadIcons();
+        loadIconSet('Fi');
     }, []);
+
+    const loadIconSet = async (prefix: string) => {
+        setIsLoading(true);
+        try {
+            const iconModule = await iconSets[prefix as keyof typeof iconSets]();
+            const iconList = Object.entries(iconModule)
+                .filter(([name]) => name !== 'default')
+                .map(([name, component]) => ({
+                    name: `${prefix}${name}`,
+                    component: component as IconType
+                }));
+            
+            setIcons(iconList);
+            setFilteredIcons(iconList.slice(0, 100));
+            setCurrentIconSet(prefix);
+        } catch (error) {
+            console.error('Error loading icons:', error);
+        }
+        setIsLoading(false);
+    };
 
     const handleSearch = (searchTerm: string) => {
         setSearch(searchTerm);
@@ -71,19 +68,11 @@ const IconSearch: React.FC<IconSearchProps> = ({
         setFilteredIcons(filtered.slice(0, 100));
     };
 
-    const handleSelectIcon = (iconName: string) => {
-        onChange(iconName);
-        setShowDropdown(false);
-        setSearch('');
+    const getCurrentIcon = (iconName: string) => {
+        if (!iconName) return false;
+        const prefix = iconName.substring(0, 2);
+        return prefix === currentIconSet;
     };
-
-    const getCurrentIcon = () => {
-        if (!value) return null;
-        const icon = icons.find(i => i.name === value);
-        return icon?.component;
-    };
-
-    const IconComponent = getCurrentIcon();
 
     return (
         <div className="space-y-2">
@@ -100,9 +89,28 @@ const IconSearch: React.FC<IconSearchProps> = ({
                     <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 </div>
 
+                {/* Icon Set Selector */}
+                <div className="mt-2 flex gap-1">
+                    {Object.keys(iconSets).map((prefix) => (
+                        <button
+                            key={prefix}
+                            onClick={() => loadIconSet(prefix)}
+                            className={`px-2 py-1 text-xs rounded ${
+                                currentIconSet === prefix 
+                                    ? 'bg-blue-500 text-white' 
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                        >
+                            {prefix}
+                        </button>
+                    ))}
+                </div>
+
                 {value && !showDropdown && (
                     <div className="mt-2 p-2 border rounded flex items-center gap-2">
-                        {IconComponent && <IconComponent size={size} className="text-gray-600" />}
+                        {getCurrentIcon(value) && 
+                            <CurrentIcon icon={value} size={size} />
+                        }
                         <span className="text-sm text-gray-600">{value}</span>
                     </div>
                 )}
@@ -119,7 +127,11 @@ const IconSearch: React.FC<IconSearchProps> = ({
                                 {filteredIcons.map(({ name, component: Icon }) => (
                                     <button
                                         key={name}
-                                        onClick={() => handleSelectIcon(name)}
+                                        onClick={() => {
+                                            onChange(name);
+                                            setShowDropdown(false);
+                                            setSearch('');
+                                        }}
                                         className="p-2 hover:bg-gray-100 rounded flex flex-col items-center gap-1"
                                     >
                                         <Icon size={size} className="text-gray-600" />
@@ -128,11 +140,6 @@ const IconSearch: React.FC<IconSearchProps> = ({
                                         </span>
                                     </button>
                                 ))}
-                                {filteredIcons.length === 0 && (
-                                    <div className="col-span-4 p-4 text-center text-gray-500">
-                                        No icons found
-                                    </div>
-                                )}
                             </div>
                         )}
                     </div>
@@ -168,6 +175,23 @@ const IconSearch: React.FC<IconSearchProps> = ({
             )}
         </div>
     );
+};
+
+// Separate component for current icon to handle dynamic imports
+const CurrentIcon: React.FC<{ icon: string; size: number }> = ({ icon, size }) => {
+    const [IconComponent, setIconComponent] = useState<IconType | null>(null);
+
+    useEffect(() => {
+        const loadIcon = async () => {
+            const prefix = icon.substring(0, 2);
+            const iconSet = await import(`react-icons/${prefix.toLowerCase()}`);
+            setIconComponent(iconSet[icon] as IconType);
+        };
+        loadIcon();
+    }, [icon]);
+
+    if (!IconComponent) return null;
+    return <IconComponent size={size} className="text-gray-600" />;
 };
 
 export default IconSearch; 
