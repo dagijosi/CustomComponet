@@ -32,7 +32,7 @@ const EditingArea: React.FC<EditingAreaProps> = ({ components, onComponentsChang
     };
 
     return (
-        <div className="p-2 sm:p-4 border rounded-lg bg-white dark:bg-gray-800 overflow-hidden">
+        <div className="p-2 sm:p-4 border rounded-lg bg-white dark:bg-gray-800 h-[calc(100vh-11rem)] flex flex-col">
             <h2 className="text-lg font-bold mb-2">Editing Area</h2>
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="components">
@@ -40,7 +40,7 @@ const EditingArea: React.FC<EditingAreaProps> = ({ components, onComponentsChang
                         <div 
                             {...provided.droppableProps} 
                             ref={provided.innerRef} 
-                            className="min-h-[200px] border-2 border-dashed border-gray-300 dark:border-gray-600 p-2 sm:p-4 rounded-lg overflow-y-auto max-h-[calc(100vh-200px)]"
+                            className="flex-1 border-2 border-dashed border-gray-300 dark:border-gray-600 p-2 sm:p-4 rounded-lg overflow-y-auto"
                         >
                             {components.length === 0 && (
                                 <div className="text-gray-400 dark:text-gray-500 text-center py-8">
