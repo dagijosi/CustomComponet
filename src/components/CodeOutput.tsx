@@ -4,7 +4,66 @@ import { ComponentData } from '../types';
 const generateTailwindCode = (component: ComponentData): string => {
     switch (component.type) {
         case 'button':
-            return `<button className="bg-${component.props.style?.backgroundColor || 'blue'}-500 text-${component.props.style?.color || 'white'} ${component.props.style?.padding || 'px-4 py-2'} rounded-${component.props.style?.borderRadius || 'lg'} ${component.props.className || ''}">${
+            const getBgClasses = () => {
+                const style = component.props.style || {};
+                if (typeof style.background === 'string' && style.background.includes('gradient')) {
+                    // Parse the gradient string
+                    const gradientStr = style.background;
+                    
+                    // Get direction class based on angle
+                    let directionClass = 'bg-gradient-to-r'; // default right
+                    if (gradientStr.includes('45deg')) {
+                        directionClass = 'bg-gradient-to-tr';
+                    } else if (gradientStr.includes('90deg')) {
+                        directionClass = 'bg-gradient-to-t';
+                    } else if (gradientStr.includes('135deg')) {
+                        directionClass = 'bg-gradient-to-tl';
+                    }
+
+                    // Extract colors
+                    const colors = gradientStr
+                        .match(/#[a-fA-F0-9]{6}/g) // Match hex colors
+                        ?.map(color => color.replace('#', ''));
+
+                    if (colors && colors.length >= 2) {
+                        return `${directionClass} from-[#${colors[0]}] to-[#${colors[1]}]`;
+                    }
+                    return directionClass;
+                }
+                
+                // Only use backgroundColor if there's no gradient
+                if (style.backgroundColor) {
+                    return `bg-[${style.backgroundColor}]`;
+                }
+                return 'bg-blue-500'; // default
+            };
+
+            const getPaddingClasses = () => {
+                const style = component.props.style || {};
+                if (typeof style.padding === 'string') {
+                    const [y, x] = style.padding.split(' ');
+                    return `py-[${y}] px-[${x}]`;
+                }
+                return 'px-4 py-2';
+            };
+
+            const getBorderRadiusClass = () => {
+                const style = component.props.style || {};
+                if (style.borderRadius) {
+                    return `rounded-[${style.borderRadius}]`;
+                }
+                return 'rounded-lg';
+            };
+
+            const getTextColorClass = () => {
+                const style = component.props.style || {};
+                if (style.color) {
+                    return `text-[${style.color}]`;
+                }
+                return 'text-white';
+            };
+
+            return `<button className="${getBgClasses()} ${getTextColorClass()} ${getPaddingClasses()} ${getBorderRadiusClass()} ${component.props.className || ''}">${
                 component.props.icon ? 
                     `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
                         component.props.iconPosition === 'only' ? 
