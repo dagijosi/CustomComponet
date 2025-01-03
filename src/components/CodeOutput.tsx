@@ -65,7 +65,15 @@ const generateTailwindCode = (component: ComponentData): string => {
                 return 'text-white';
             };
 
-            return `<button className="${getBgClasses()} ${getTextColorClass()} ${getPaddingClasses()} ${getBorderRadiusClass()} ${component.props.className || ''}">${
+            const getFlexClasses = () => {
+                // Always add flex and items-center if there's an icon
+                if (component.props.icon) {
+                    return 'flex items-center';
+                }
+                return '';
+            };
+
+            return `<button className="${getBgClasses()} ${getTextColorClass()} ${getPaddingClasses()} ${getBorderRadiusClass()} ${getFlexClasses()} ${component.props.className || ''}">${
                 component.props.icon ? 
                     `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
                         component.props.iconPosition === 'only' ? 
@@ -144,7 +152,16 @@ const generateTailwindCode = (component: ComponentData): string => {
 const generateNormalCode = (component: ComponentData): string => {
     switch (component.type) {
         case 'button':
-            return `<button style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${
+            const style = {
+                ...component.props.style,
+                // Add flex styles if there's an icon
+                ...(component.props.icon && {
+                    display: 'flex',
+                    alignItems: 'center'
+                })
+            };
+
+            return `<button style={${JSON.stringify(style)}} className="${component.props.className ?? ''}">${
                 component.props.icon ? 
                     `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
                         component.props.iconPosition === 'only' ? 
