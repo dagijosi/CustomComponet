@@ -1,55 +1,17 @@
 import React, { useState } from 'react';
 import { ComponentData } from '../types';
 import GradientPicker from './GradientPicker';
-
 import ComponentPreview from './ComponentPreview';
 import SpacingControl from './SpacingControl';
 import StyleControls from './StyleControls';
-import IconSearch from './IconSearch';
+import ContentProperties from './ContentProperties';
+import SpecificStyleProperties from './SpecificStyleProperties';
 
 interface ComponentEditorProps {
     component: ComponentData;
     onChange: (newProps: any) => void;
     onDelete?: () => void;
 }
-
-// type CSSSpacingProperty = 'margin' | 'padding';
-// type CSSSpacingSide = 'Top' | 'Right' | 'Bottom' | 'Left';
-// // type CSSSpacingKey = `${CSSSpacingProperty}${CSSSpacingSide}`;
-
-// const applySpacingPreset = (
-//     preset: 'equal' | 'content' | 'reset',
-//     currentStyle: React.CSSProperties
-// ): React.CSSProperties => {
-//     const style = { ...currentStyle };
-//     const sides: CSSSpacingSide[] = ['Top', 'Right', 'Bottom', 'Left'];
-
-//     switch (preset) {
-//         case 'equal':
-//             sides.forEach(side => {
-//                 (style as any)[`margin${side}`] = '16px';
-//                 (style as any)[`padding${side}`] = '16px';
-//             });
-//             break;
-//         case 'content':
-//             sides.filter(side => side === 'Top' || side === 'Bottom').forEach(side => {
-//                 (style as any)[`margin${side}`] = '16px';
-//                 (style as any)[`padding${side}`] = '8px';
-//             });
-//             sides.filter(side => side === 'Right' || side === 'Left').forEach(side => {
-//                 (style as any)[`margin${side}`] = '32px';
-//                 (style as any)[`padding${side}`] = '16px';
-//             });
-//             break;
-//         case 'reset':
-//             sides.forEach(side => {
-//                 (style as any)[`margin${side}`] = '0px';
-//                 (style as any)[`padding${side}`] = '0px';
-//             });
-//             break;
-//     }
-//     return style;
-// };
 
 const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, onDelete }) => {
     const [localProps, setLocalProps] = useState(component.props);
@@ -99,348 +61,6 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
         setLocalProps(newProps);
         onChange(newProps);
         setUseGradient(false);
-    };
-
-    const renderContentProperties = () => {
-        switch (component.type) {
-            case 'button':
-            case 'link':
-                return (
-                    <div className="space-y-4">
-                        {/* Only show text input if not in icon-only mode */}
-                        {localProps.iconPosition !== 'only' && (
-                            <div>
-                                <label className="block text-sm font-medium mb-1">
-                                    {component.type === 'button' ? 'Button Text' : 'Link Text'}
-                                </label>
-                                <input
-                                    type="text"
-                                    name="text"
-                                    value={localProps.text || ''}
-                                    onChange={handleChange}
-                                    placeholder={`${component.type === 'button' ? 'Button' : 'Link'} Text`}
-                                    className="w-full p-2 border rounded"
-                                />
-                            </div>
-                        )}
-
-                        {/* Icon Search */}
-                        <div>
-                            <label className="block text-sm font-medium mb-1">Icon</label>
-                            <IconSearch
-                                value={localProps.icon || ''}
-                                onChange={(iconName) => handleChange({
-                                    target: { name: 'icon', value: iconName }
-                                })}
-                                position={localProps.iconPosition || 'left'}
-                                onPositionChange={(position) => handleChange({
-                                    target: { name: 'iconPosition', value: position }
-                                })}
-                                size={localProps.iconSize || 16}
-                                onSizeChange={(size) => handleChange({
-                                    target: { name: 'iconSize', value: size }
-                                })}
-                            />
-                        </div>
-
-                        {/* Additional properties for link */}
-                        {component.type === 'link' && (
-                            <div>
-                                <label className="block text-sm font-medium mb-1">URL</label>
-                                <input
-                                    type="text"
-                                    name="href"
-                                    value={localProps.href || ''}
-                                    onChange={handleChange}
-                                    placeholder="https://example.com"
-                                    className="w-full p-2 border rounded"
-                                />
-                            </div>
-                        )}
-                    </div>
-                );
-            case 'input':
-                return (
-                    <>
-                        <input
-                            type="text"
-                            name="placeholder"
-                            value={localProps.placeholder || ''}
-                            onChange={handleChange}
-                            placeholder="Placeholder text"
-                            className="w-full p-2 border rounded mb-2"
-                        />
-                        <select
-                            name="type"
-                            value={localProps.type || 'text'}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                        >
-                            <option value="text">Text</option>
-                            <option value="password">Password</option>
-                            <option value="email">Email</option>
-                            <option value="number">Number</option>
-                            <option value="tel">Phone</option>
-                            <option value="url">URL</option>
-                            <option value="date">Date</option>
-                        </select>
-                    </>
-                );
-            case 'link':
-                return (
-                    <>
-                        <input
-                            type="text"
-                            name="text"
-                            value={localProps.text || ''}
-                            onChange={handleChange}
-                            placeholder="Link Text"
-                            className="w-full p-2 border rounded mb-2"
-                        />
-                        <input
-                            type="text"
-                            name="href"
-                            value={localProps.href || ''}
-                            onChange={handleChange}
-                            placeholder="URL"
-                            className="w-full p-2 border rounded mb-2"
-                        />
-                        <input
-                            type="text"
-                            name="icon"
-                            value={localProps.icon || ''}
-                            onChange={handleChange}
-                            placeholder="Icon class"
-                            className="w-full p-2 border rounded"
-                        />
-                    </>
-                );
-            case 'image':
-                return (
-                    <>
-                        <input
-                            type="text"
-                            name="src"
-                            value={localProps.src || ''}
-                            onChange={handleChange}
-                            placeholder="Image URL"
-                            className="w-full p-2 border rounded mb-2"
-                        />
-                        <input
-                            type="text"
-                            name="alt"
-                            value={localProps.alt || ''}
-                            onChange={handleChange}
-                            placeholder="Alt text"
-                            className="w-full p-2 border rounded"
-                        />
-                    </>
-                );
-            case 'select':
-                return (
-                    <textarea
-                        name="options"
-                        value={(localProps.options || []).join('\n')}
-                        onChange={(e) => {
-                            const options = e.target.value.split('\n').filter(Boolean);
-                            const newProps = { ...localProps, options };
-                            setLocalProps(newProps);
-                            onChange(newProps);
-                        }}
-                        placeholder="Enter options (one per line)"
-                        className="w-full p-2 border rounded"
-                        rows={5}
-                    />
-                );
-            case 'card':
-                return (
-                    <>
-                        <input
-                            type="text"
-                            name="text"
-                            value={localProps.text || ''}
-                            onChange={handleChange}
-                            placeholder="Card Title"
-                            className="w-full p-2 border rounded mb-2"
-                        />
-                        <textarea
-                            name="children"
-                            value={localProps.children || ''}
-                            onChange={handleChange}
-                            placeholder="Card Content"
-                            className="w-full p-2 border rounded"
-                            rows={3}
-                        />
-                    </>
-                );
-            case 'alert':
-                return (
-                    <>
-                        <input
-                            type="text"
-                            name="text"
-                            value={localProps.text || ''}
-                            onChange={handleChange}
-                            placeholder="Alert Message"
-                            className="w-full p-2 border rounded mb-2"
-                        />
-                        <select
-                            name="type"
-                            value={localProps.alertType || 'error'}
-                            onChange={handleChange}
-                            className="w-full p-2 border rounded"
-                        >
-                            <option value="error">Error</option>
-                            <option value="success">Success</option>
-                            <option value="warning">Warning</option>
-                            <option value="info">Info</option>
-                        </select>
-                    </>
-                );
-            case 'badge':
-                return (
-                    <input
-                        type="text"
-                        name="text"
-                        value={localProps.text || ''}
-                        onChange={handleChange}
-                        placeholder="Badge Text"
-                        className="w-full p-2 border rounded"
-                    />
-                );
-            case 'checkbox':
-            case 'radio':
-                return (
-                    <>
-                        <input
-                            type="text"
-                            name="text"
-                            value={localProps.text || ''}
-                            onChange={handleChange}
-                            placeholder="Label Text"
-                            className="w-full p-2 border rounded mb-2"
-                        />
-                        <label className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                name="checked"
-                                checked={localProps.checked || false}
-                                onChange={(e) => handleChange({
-                                    target: { name: 'checked', value: e.target.checked }
-                                })}
-                            />
-                            Default Checked
-                        </label>
-                    </>
-                );
-            case 'toggle':
-                return (
-                    <label className="flex items-center gap-2">
-                        <input
-                            type="checkbox"
-                            name="checked"
-                            checked={localProps.checked || false}
-                            onChange={(e) => handleChange({
-                                target: { name: 'checked', value: e.target.checked }
-                            })}
-                        />
-                        Default State
-                    </label>
-                );
-            case 'section':
-                return (
-                    <>
-                        <input
-                            type="text"
-                            name="title"
-                            value={localProps.title || ''}
-                            onChange={handleChange}
-                            placeholder="Section Title"
-                            className="w-full p-2 border rounded mb-2"
-                        />
-                        <textarea
-                            name="text"
-                            value={localProps.text || ''}
-                            onChange={handleChange}
-                            placeholder="Section Content"
-                            className="w-full p-2 border rounded"
-                            rows={3}
-                        />
-                    </>
-                );
-            default:
-                return null;
-        }
-    };
-
-    const renderSpecificStyleProperties = () => {
-        switch (component.type) {
-            case 'button':
-                return (
-                    <div className="grid grid-cols-2 gap-2">
-                        <input
-                            type="text"
-                            placeholder="Font Size"
-                            value={localProps.style?.fontSize || ""}
-                            onChange={(e) => handleStyleChange("fontSize", e.target.value)}
-                            className="p-2 border rounded"
-                        />
-                        <select
-                            value={localProps.style?.fontWeight || ""}
-                            onChange={(e) => handleStyleChange("fontWeight", e.target.value)}
-                            className="p-2 border rounded"
-                        >
-                            <option value="">Font Weight</option>
-                            <option value="normal">Normal</option>
-                            <option value="500">Medium</option>
-                            <option value="600">Semi Bold</option>
-                            <option value="700">Bold</option>
-                        </select>
-                    </div>
-                );
-            case 'image':
-                return (
-                    <div className="grid grid-cols-2 gap-2">
-                        <input
-                            type="text"
-                            placeholder="Object Fit"
-                            value={localProps.style?.objectFit || ""}
-                            onChange={(e) => handleStyleChange("objectFit", e.target.value)}
-                            className="p-2 border rounded"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Object Position"
-                            value={localProps.style?.objectPosition || ""}
-                            onChange={(e) => handleStyleChange("objectPosition", e.target.value)}
-                            className="p-2 border rounded"
-                        />
-                    </div>
-                );
-            case 'p':
-            case 'h1':
-            case 'h2':
-                return (
-                    <div className="grid grid-cols-2 gap-2">
-                        <input
-                            type="text"
-                            placeholder="Line Height"
-                            value={localProps.style?.lineHeight || ""}
-                            onChange={(e) => handleStyleChange("lineHeight", e.target.value)}
-                            className="p-2 border rounded"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Letter Spacing"
-                            value={localProps.style?.letterSpacing || ""}
-                            onChange={(e) => handleStyleChange("letterSpacing", e.target.value)}
-                            className="p-2 border rounded"
-                        />
-                    </div>
-                );
-            default:
-                return null;
-        }
     };
 
     return (
@@ -505,7 +125,13 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
                     {/* Content Tab */}
                     {activeTab === 'content' && (
                         <div className="space-y-4 bg-white p-4 rounded-lg border">
-                            {renderContentProperties()}
+                            <ContentProperties 
+                                component={component} 
+                                localProps={localProps} 
+                                handleChange={handleChange} 
+                                onChange={onChange} 
+                                setLocalProps={setLocalProps} 
+                            />
                             <input
                                 type="text"
                                 name="className"
@@ -558,7 +184,11 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
                             )}
 
                             {/* Component-specific style properties */}
-                            {renderSpecificStyleProperties()}
+                            <SpecificStyleProperties 
+                                component={component} 
+                                localProps={localProps} 
+                                handleStyleChange={handleStyleChange} 
+                            />
                         </div>
                     )}
 

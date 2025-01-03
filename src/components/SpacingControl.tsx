@@ -67,4 +67,4 @@ const SpacingControl: React.FC<{
     );
 };
 
-export default SpacingControl; 
+export default SpacingControl;
