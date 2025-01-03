@@ -31,6 +31,14 @@ const SpecificStyleProperties: React.FC<SpecificStylePropertiesProps> = ({ compo
                             <option value="600">Semi Bold</option>
                             <option value="700">Bold</option>
                         </select>
+                        <select
+                            value={localProps.style?.boxSizing || ""}
+                            onChange={(e) => handleStyleChange("boxSizing", e.target.value)}
+                            className="p-2 border rounded"
+                        >
+                            <option value="content-box">Content Box</option>
+                            <option value="border-box">Border Box</option>
+                        </select>
                     </div>
                 );
             case 'image':

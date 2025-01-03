@@ -33,6 +33,17 @@ const StyleControls: React.FC<StyleControlsProps> = ({ style, onStyleChange }) =
                             className="w-full p-2 text-sm border rounded"
                         />
                     </div>
+                    <div>
+                        <label className="text-xs text-gray-600 mb-1 block">Box Sizing</label>
+                        <select
+                            value={style.boxSizing || ''}
+                            onChange={(e) => onStyleChange('boxSizing', e.target.value)}
+                            className="w-full p-2 text-sm border rounded"
+                        >
+                            <option value="content-box">Content Box</option>
+                            <option value="border-box">Border Box</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -178,4 +189,4 @@ const StyleControls: React.FC<StyleControlsProps> = ({ style, onStyleChange }) =
     );
 };
 
-export default StyleControls; 
+export default StyleControls;
