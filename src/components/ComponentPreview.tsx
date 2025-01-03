@@ -9,7 +9,6 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
         
         switch (type) {
             case 'button':
-                console.log("props",props);
                 return (
                     <button style={props.style} className={props.className}>
                         {props.icon && props.iconPosition === 'left' && (

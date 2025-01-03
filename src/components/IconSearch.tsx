@@ -52,7 +52,7 @@ const IconSearch: React.FC<IconSearchProps> = ({
             const iconList = Object.entries(iconModule)
                 .filter(([name]) => name !== 'default')
                 .map(([name, component]) => ({
-                    name: `${prefix}${name}`,
+                    name,
                     component: component as IconType
                 }));
             
@@ -86,7 +86,6 @@ const IconSearch: React.FC<IconSearchProps> = ({
     };
 
     const handleIconSelect = (iconName: string) => {
-        console.log("Selected icon:", iconName);
         onChange(iconName);
         setShowDropdown(false);
         setSearch('');

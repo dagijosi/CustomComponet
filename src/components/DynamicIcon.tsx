@@ -26,7 +26,6 @@ const DynamicIcon: React.FC<{
                 console.log("iconName", iconName);
                 // Remove duplicate prefix if it exists (e.g., "FiFiActivity" -> "FiActivity")
                 const cleanIconName = iconName.replace(/^(Fi|Ai|Bi|Bs|Hi|Md)\1/, '$1');
-                console.log("cleanIconName", cleanIconName);
                 
                 // Extract prefix and name differently
                 const prefix = cleanIconName.substring(0, 2).toLowerCase();
