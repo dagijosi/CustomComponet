@@ -18,6 +18,8 @@ export interface ComponentProps {
     alertType?: 'error' | 'success' | 'warning' | 'info';
     iconPosition?: 'left' | 'right' | 'only';
     iconSize?: number;
+    iconSpacingX?: string | number;
+    iconSpacingY?: string | number;
 }
 
 export interface ComponentData {

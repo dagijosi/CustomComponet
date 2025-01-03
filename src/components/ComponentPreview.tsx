@@ -12,7 +12,8 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.5rem', // Adds consistent spacing between items
+            gap: props.iconSpacingX || '0.5rem',
+            rowGap: props.iconSpacingY || '0',
             ...props.style
         };
         

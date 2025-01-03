@@ -13,8 +13,11 @@ interface IconSearchProps {
     onChange: (iconComponent: string) => void;
     onPositionChange?: (position: 'left' | 'right' | 'only') => void;
     onSizeChange?: (size: number) => void;
+    onSpacingChange?: (spacing: { x?: string | number; y?: string | number }) => void;
     position?: 'left' | 'right' | 'only';
     size?: number;
+    spacingX?: string | number;
+    spacingY?: string | number;
 }
 
 const IconSearch: React.FC<IconSearchProps> = ({ 
@@ -22,8 +25,11 @@ const IconSearch: React.FC<IconSearchProps> = ({
     onChange, 
     onPositionChange,
     onSizeChange,
+    onSpacingChange,
     position = 'left',
-    size = 16 
+    size = 16,
+    spacingX,
+    spacingY
 }) => {
     const [search, setSearch] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
@@ -184,6 +190,37 @@ const IconSearch: React.FC<IconSearchProps> = ({
                             className="w-24"
                         />
                         <span className="text-sm text-gray-600">{size}px</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <label className="text-sm text-gray-600">Spacing:</label>
+                        <div className="flex gap-2">
+                            <div className="flex items-center gap-1">
+                                <span className="text-xs text-gray-500">X:</span>
+                                <input
+                                    type="text"
+                                    value={spacingX || ''}
+                                    onChange={(e) => onSpacingChange?.({ 
+                                        x: e.target.value,
+                                        y: spacingY 
+                                    })}
+                                    placeholder="8px"
+                                    className="w-16 text-sm p-1 border rounded"
+                                />
+                            </div>
+                            <div className="flex items-center gap-1">
+                                <span className="text-xs text-gray-500">Y:</span>
+                                <input
+                                    type="text"
+                                    value={spacingY || ''}
+                                    onChange={(e) => onSpacingChange?.({ 
+                                        x: spacingX,
+                                        y: e.target.value 
+                                    })}
+                                    placeholder="0px"
+                                    className="w-16 text-sm p-1 border rounded"
+                                />
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

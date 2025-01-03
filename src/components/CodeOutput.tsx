@@ -201,7 +201,8 @@ const generateNormalCode = (component: ComponentData): string => {
                 ...(component.props.icon && {
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.5rem'
+                    gap: component.props.iconSpacingX || '0.5rem',
+                    rowGap: component.props.iconSpacingY || '0'
                 })
             };
 
