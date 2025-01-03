@@ -6,8 +6,9 @@ const generateTailwindCode = (component: ComponentData): string => {
         case 'button':
             const getBgClasses = () => {
                 const style = component.props.style || {};
+                
+                // If there's a gradient, use it and ignore backgroundColor
                 if (typeof style.background === 'string' && style.background.includes('gradient')) {
-                    // Parse the gradient string
                     const gradientStr = style.background;
                     
                     // Get direction class based on angle
@@ -22,20 +23,21 @@ const generateTailwindCode = (component: ComponentData): string => {
 
                     // Extract colors
                     const colors = gradientStr
-                        .match(/#[a-fA-F0-9]{6}/g) // Match hex colors
+                        .match(/#[a-fA-F0-9]{6}/g)
                         ?.map(color => color.replace('#', ''));
 
                     if (colors && colors.length >= 2) {
                         return `${directionClass} from-[#${colors[0]}] to-[#${colors[1]}]`;
                     }
-                    return directionClass;
                 }
                 
-                // Only use backgroundColor if there's no gradient
+                // If no gradient, use backgroundColor
                 if (style.backgroundColor) {
                     return `bg-[${style.backgroundColor}]`;
                 }
-                return 'bg-blue-500'; // default
+
+                // Default fallback
+                return 'bg-blue-500';
             };
 
             const getPaddingClasses = () => {
