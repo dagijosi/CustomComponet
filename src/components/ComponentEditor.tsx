@@ -61,7 +61,19 @@ const ComponentEditor: React.FC<ComponentEditorProps> = ({ component, onChange, 
         { target: { name: string; value: any } }
     ) => {
         const { name, value } = event.target;
-        const newProps = { ...localProps, [name]: value };
+        console.log("ComponentEditor handleChange:", name, value);
+        
+        // When setting an icon, ensure iconPosition is initialized
+        const newProps = {
+            ...localProps,
+            [name]: value,
+            // Initialize iconPosition with proper type when an icon is first added
+            ...(name === 'icon' && !localProps.iconPosition && { 
+                iconPosition: 'left' as 'left' | 'right' | 'only'
+            })
+        };
+        
+        console.log("New props:", newProps);
         setLocalProps(newProps);
         onChange(newProps);
     };

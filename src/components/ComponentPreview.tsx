@@ -9,10 +9,9 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
         
         switch (type) {
             case 'button':
-                console.log(props);
+                console.log("props",props);
                 return (
                     <button style={props.style} className={props.className}>
-                        {/* Show left icon */}
                         {props.icon && props.iconPosition === 'left' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
@@ -20,9 +19,7 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
                                 className="inline-block mr-2" 
                             />
                         )}
-                        {/* Show text only if not icon-only mode */}
                         {props.iconPosition !== 'only' && props.text}
-                        {/* Show icon for icon-only mode */}
                         {props.icon && props.iconPosition === 'only' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
@@ -30,7 +27,6 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
                                 className="inline-block" 
                             />
                         )}
-                        {/* Show right icon */}
                         {props.icon && props.iconPosition === 'right' && (
                             <DynamicIcon 
                                 iconName={props.icon} 

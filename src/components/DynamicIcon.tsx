@@ -23,8 +23,16 @@ const DynamicIcon: React.FC<{
             setError(null);
     
             try {
-                const prefix = iconName.substring(0, 2).toLowerCase();
-                const name = iconName.slice(2);
+                console.log("iconName", iconName);
+                // Remove duplicate prefix if it exists (e.g., "FiFiActivity" -> "FiActivity")
+                const cleanIconName = iconName.replace(/^(Fi|Ai|Bi|Bs|Hi|Md)\1/, '$1');
+                console.log("cleanIconName", cleanIconName);
+                
+                // Extract prefix and name differently
+                const prefix = cleanIconName.substring(0, 2).toLowerCase();
+                // Don't remove the prefix from the name
+                const name = cleanIconName;
+                
                 let iconModule;
 
                 // Map the icon sets
@@ -51,7 +59,9 @@ const DynamicIcon: React.FC<{
                         throw new Error(`Icon set ${prefix} not found`);
                 }
 
+                // Try to get the icon directly from the module
                 const Icon = iconModule[name as keyof typeof iconModule] as IconType;
+                
                 if (Icon) {
                     setIconComponent(() => Icon);
                 } else {

@@ -85,6 +85,13 @@ const IconSearch: React.FC<IconSearchProps> = ({
         return prefix === currentIconSet;
     };
 
+    const handleIconSelect = (iconName: string) => {
+        console.log("Selected icon:", iconName);
+        onChange(iconName);
+        setShowDropdown(false);
+        setSearch('');
+    };
+
     return (
         <div className="space-y-2">
             <div className="relative">
@@ -138,11 +145,7 @@ const IconSearch: React.FC<IconSearchProps> = ({
                                 {filteredIcons.map(({ name, component: Icon }) => (
                                     <button
                                         key={name}
-                                        onClick={() => {
-                                            onChange(name);
-                                            setShowDropdown(false);
-                                            setSearch('');
-                                        }}
+                                        onClick={() => handleIconSelect(name)}
                                         className="p-2 hover:bg-gray-100 rounded flex flex-col items-center gap-1"
                                     >
                                         <Icon size={size} className="text-gray-600" />
