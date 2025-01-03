@@ -6,6 +6,7 @@ const SpacingControl: React.FC<{
     onChange: (property: string, value: string) => void;
 }> = ({ type, values, onChange }) => {
     const handleChange = (side: string, value: string) => {
+        console.log(`Updating ${type}${side.charAt(0).toUpperCase() + side.slice(1)} to ${value}`);
         onChange(`${type}${side.charAt(0).toUpperCase() + side.slice(1)}`, value);
     };
 
@@ -14,14 +15,19 @@ const SpacingControl: React.FC<{
         return value.toString();
     };
 
+    const handleReset = () => {
+        ['top', 'right', 'bottom', 'left'].forEach((side) => handleChange(side, ''));
+    };
+
     return (
         <div className="space-y-2">
-            <h6 className="text-sm font-medium capitalize">{type}</h6>
+            <h6 className="text-sm font-medium capitalize">{type} Control</h6>
             <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-2">
                     <input
                         type="text"
                         placeholder="Top"
+                        title="Set top spacing"
                         value={toString(values.top)}
                         onChange={(e) => handleChange('top', e.target.value)}
                         className="w-full p-2 border rounded text-sm"
@@ -29,6 +35,7 @@ const SpacingControl: React.FC<{
                     <input
                         type="text"
                         placeholder="Bottom"
+                        title="Set bottom spacing"
                         value={toString(values.bottom)}
                         onChange={(e) => handleChange('bottom', e.target.value)}
                         className="w-full p-2 border rounded text-sm"
@@ -38,6 +45,7 @@ const SpacingControl: React.FC<{
                     <input
                         type="text"
                         placeholder="Right"
+                        title="Set right spacing"
                         value={toString(values.right)}
                         onChange={(e) => handleChange('right', e.target.value)}
                         className="w-full p-2 border rounded text-sm"
@@ -45,24 +53,21 @@ const SpacingControl: React.FC<{
                     <input
                         type="text"
                         placeholder="Left"
+                        title="Set left spacing"
                         value={toString(values.left)}
                         onChange={(e) => handleChange('left', e.target.value)}
                         className="w-full p-2 border rounded text-sm"
                     />
                 </div>
             </div>
-            <button
-                onClick={() => {
-                    const value = '8px';
-                    handleChange('top', value);
-                    handleChange('right', value);
-                    handleChange('bottom', value);
-                    handleChange('left', value);
-                }}
-                className="text-xs text-blue-500 hover:text-blue-600"
-            >
-                Set all to 8px
-            </button>
+            <div className="flex space-x-2">
+                <button
+                    onClick={handleReset}
+                    className="text-xs text-red-500 hover:text-red-600"
+                >
+                    Reset
+                </button>
+            </div>
         </div>
     );
 };
