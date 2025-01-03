@@ -1,60 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ComponentData } from '../types';
-import { IconType } from 'react-icons';
-import { FiLoader } from 'react-icons/fi';
+import DynamicIcon from './DynamicIcon';
 
 // Create a separate component for dynamically loading icons
-const DynamicIcon: React.FC<{ 
-    iconName: string; 
-    size?: number;
-    className?: string;
-}> = ({ iconName, size = 16, className = "" }) => {
-    const [IconComponent, setIconComponent] = useState<IconType | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const loadIcon = async () => {
-            try {
-                const prefix = iconName.substring(0, 2).toLowerCase();
-                const iconSet = await import(`react-icons/${prefix}`);
-                setIconComponent(iconSet[iconName] as IconType);
-            } catch (error) {
-                console.error('Error loading icon:', error);
-            }
-            setIsLoading(false);
-        };
-
-        loadIcon();
-    }, [iconName]);
-
-    if (isLoading) return <FiLoader className="animate-spin" />;
-    if (!IconComponent) return null;
-    return <IconComponent size={size} className={className} />;
-};
-
 const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component }) => {
     const renderComponent = () => {
         const { type, props } = component;
         
         switch (type) {
             case 'button':
+                console.log(props);
                 return (
                     <button style={props.style} className={props.className}>
-                        {props.iconPosition !== 'right' && props.icon && 
+                        {/* Show left icon */}
+                        {props.icon && props.iconPosition === 'left' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
                                 className="inline-block mr-2" 
                             />
-                        }
-                        {props.text}
-                        {props.iconPosition === 'right' && props.icon && 
+                        )}
+                        {/* Show text only if not icon-only mode */}
+                        {props.iconPosition !== 'only' && props.text}
+                        {/* Show icon for icon-only mode */}
+                        {props.icon && props.iconPosition === 'only' && (
+                            <DynamicIcon 
+                                iconName={props.icon} 
+                                size={props.iconSize || 16} 
+                                className="inline-block" 
+                            />
+                        )}
+                        {/* Show right icon */}
+                        {props.icon && props.iconPosition === 'right' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
                                 className="inline-block ml-2" 
                             />
-                        }
+                        )}
                     </button>
                 );
             case 'input':
@@ -69,21 +52,32 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
             case 'link':
                 return (
                     <a href={props.href} style={props.style} className={props.className}>
-                        {props.iconPosition !== 'right' && props.icon && 
+                        {/* Show left icon */}
+                        {props.icon && props.iconPosition === 'left' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
                                 className="inline-block mr-2" 
                             />
-                        }
-                        {props.text}
-                        {props.iconPosition === 'right' && props.icon && 
+                        )}
+                        {/* Show text only if not icon-only mode */}
+                        {props.iconPosition !== 'only' && props.text}
+                        {/* Show icon for icon-only mode */}
+                        {props.icon && props.iconPosition === 'only' && (
+                            <DynamicIcon 
+                                iconName={props.icon} 
+                                size={props.iconSize || 16} 
+                                className="inline-block" 
+                            />
+                        )}
+                        {/* Show right icon */}
+                        {props.icon && props.iconPosition === 'right' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
                                 className="inline-block ml-2" 
                             />
-                        }
+                        )}
                     </a>
                 );
             case 'image':

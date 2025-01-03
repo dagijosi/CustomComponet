@@ -1,5 +1,5 @@
 import React from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { ComponentData } from '../types';
 import ComponentEditor from './ComponentEditor';
 
@@ -9,7 +9,7 @@ interface EditingAreaProps {
 }
 
 const EditingArea: React.FC<EditingAreaProps> = ({ components, onComponentsChange }) => {
-    const onDragEnd = (result: any) => {
+    const onDragEnd = (result: DropResult) => {
         if (!result.destination) return;
 
         const items = Array.from(components);
@@ -35,11 +35,11 @@ const EditingArea: React.FC<EditingAreaProps> = ({ components, onComponentsChang
         <div className="p-2 sm:p-4 border rounded-lg bg-white dark:bg-gray-800 h-[calc(100vh-11rem)] flex flex-col">
             <h2 className="text-lg font-bold mb-2">Editing Area</h2>
             <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="components">
+                <Droppable droppableId="components" type="COMPONENT">
                     {(provided) => (
                         <div 
+                            ref={provided.innerRef}
                             {...provided.droppableProps} 
-                            ref={provided.innerRef} 
                             className="flex-1 border-2 border-dashed border-gray-300 dark:border-gray-600 p-2 sm:p-4 rounded-lg overflow-y-auto"
                         >
                             {components.length === 0 && (
@@ -48,7 +48,11 @@ const EditingArea: React.FC<EditingAreaProps> = ({ components, onComponentsChang
                                 </div>
                             )}
                             {components.map((component, index) => (
-                                <Draggable key={component.id} draggableId={component.id} index={index}>
+                                <Draggable 
+                                    key={component.id} 
+                                    draggableId={component.id} 
+                                    index={index}
+                                >
                                     {(provided) => (
                                         <div
                                             ref={provided.innerRef}

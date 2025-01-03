@@ -5,9 +5,9 @@ import { FiSearch, FiLoader } from 'react-icons/fi';
 interface IconSearchProps {
     value: string;
     onChange: (iconComponent: string) => void;
-    onPositionChange?: (position: 'left' | 'right') => void;
+    onPositionChange?: (position: 'left' | 'right' | 'only') => void;
     onSizeChange?: (size: number) => void;
-    position?: 'left' | 'right';
+    position?: 'left' | 'right' | 'only';
     size?: number;
 }
 
@@ -149,14 +149,15 @@ const IconSearch: React.FC<IconSearchProps> = ({
             {value && (
                 <div className="flex items-center gap-4 p-2 border rounded bg-gray-50">
                     <div className="flex items-center gap-2">
-                        <label className="text-sm text-gray-600">Position:</label>
+                        <label className="text-sm text-gray-600">Display:</label>
                         <select
                             value={position}
-                            onChange={(e) => onPositionChange?.(e.target.value as 'left' | 'right')}
+                            onChange={(e) => onPositionChange?.(e.target.value as 'left' | 'right' | 'only')}
                             className="text-sm border rounded p-1"
                         >
-                            <option value="left">Left</option>
-                            <option value="right">Right</option>
+                            <option value="left">Icon Left</option>
+                            <option value="right">Icon Right</option>
+                            <option value="only">Icon Only</option>
                         </select>
                     </div>
                     <div className="flex items-center gap-2">

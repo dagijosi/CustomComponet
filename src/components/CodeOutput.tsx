@@ -4,11 +4,31 @@ import { ComponentData } from '../types';
 const generateTailwindCode = (component: ComponentData): string => {
     switch (component.type) {
         case 'button':
-            return `<button className="bg-${component.props.style?.backgroundColor || 'blue'}-500 text-${component.props.style?.color || 'white'} ${component.props.style?.padding || 'px-4 py-2'} rounded-${component.props.style?.borderRadius || 'lg'} ${component.props.className || ''}">${component.props.icon ? `<i class="${component.props.icon}"></i>` : ''}${component.props.text}</button>`;
+            return `<button className="bg-${component.props.style?.backgroundColor || 'blue'}-500 text-${component.props.style?.color || 'white'} ${component.props.style?.padding || 'px-4 py-2'} rounded-${component.props.style?.borderRadius || 'lg'} ${component.props.className || ''}">${
+                component.props.icon ? 
+                    `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
+                        component.props.iconPosition === 'only' ? 
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} />` :
+                        component.props.iconPosition === 'right' ?
+                            `${component.props.text} <${component.props.icon} size={${component.props.iconSize || 16}} className="ml-2" />` :
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} className="mr-2" /> ${component.props.text}`
+                    }` : 
+                    component.props.text
+            }</button>`;
         case 'input':
             return `<input type="${component.props.type}" placeholder="${component.props.placeholder}" className="border rounded-${component.props.style?.borderRadius || 'lg'} ${component.props.style?.padding || 'px-4 py-2'} ${component.props.className || ''}"/>`;
         case 'link':
-            return `<a href="${component.props.href}" className="text-${component.props.style?.color || 'blue'}-500 hover:text-${component.props.style?.color || 'blue'}-700 ${component.props.className || ''}">${component.props.icon ? `<i class="${component.props.icon}"></i>` : ''}${component.props.text}</a>`;
+            return `<a href="${component.props.href}" className="text-${component.props.style?.color || 'blue'}-500 hover:text-${component.props.style?.color || 'blue'}-700 ${component.props.className || ''}">${
+                component.props.icon ? 
+                    `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
+                        component.props.iconPosition === 'only' ? 
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} />` :
+                        component.props.iconPosition === 'right' ?
+                            `${component.props.text} <${component.props.icon} size={${component.props.iconSize || 16}} className="ml-2" />` :
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} className="mr-2" /> ${component.props.text}`
+                    }` : 
+                    component.props.text
+            }</a>`;
         case 'image':
           return `<img src="${component.props.src}" alt="${component.props.alt}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}"/>`
         case 'div':
@@ -63,11 +83,31 @@ const generateTailwindCode = (component: ComponentData): string => {
 const generateNormalCode = (component: ComponentData): string => {
     switch (component.type) {
         case 'button':
-            return `<button style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.icon ? `<i class="${component.props.icon}"></i>` : ''}${component.props.text}</button>`;
+            return `<button style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${
+                component.props.icon ? 
+                    `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
+                        component.props.iconPosition === 'only' ? 
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} />` :
+                        component.props.iconPosition === 'right' ?
+                            `${component.props.text} <${component.props.icon} size={${component.props.iconSize || 16}} style={{ marginLeft: '8px' }} />` :
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} style={{ marginRight: '8px' }} /> ${component.props.text}`
+                    }` : 
+                    component.props.text
+            }</button>`;
         case 'input':
             return `<input type="${component.props.type}" placeholder="${component.props.placeholder}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}"/>`;
         case 'link':
-            return `<a href="${component.props.href}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.icon ? `<i class="${component.props.icon}"></i>` : ''}${component.props.text}</a>`;
+            return `<a href="${component.props.href}" style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${
+                component.props.icon ? 
+                    `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
+                        component.props.iconPosition === 'only' ? 
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} />` :
+                        component.props.iconPosition === 'right' ?
+                            `${component.props.text} <${component.props.icon} size={${component.props.iconSize || 16}} style={{ marginLeft: '8px' }} />` :
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} style={{ marginRight: '8px' }} /> ${component.props.text}`
+                    }` : 
+                    component.props.text
+            }</a>`;
         case 'image':
           return `<img src="${component.props.src}" alt="${component.props.alt}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}"/>`
         case 'div':
