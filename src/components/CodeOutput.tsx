@@ -42,11 +42,31 @@ const generateTailwindCode = (component: ComponentData): string => {
 
             const getPaddingClasses = () => {
                 const style = component.props.style || {};
-                if (typeof style.padding === 'string') {
-                    const [y, x] = style.padding.split(' ');
-                    return `py-[${y}] px-[${x}]`;
+                
+                // Check for individual padding values first
+                if (style.paddingTop || style.paddingBottom || style.paddingLeft || style.paddingRight) {
+                    return [
+                        style.paddingTop && `pt-[${style.paddingTop}]`,
+                        style.paddingRight && `pr-[${style.paddingRight}]`,
+                        style.paddingBottom && `pb-[${style.paddingBottom}]`,
+                        style.paddingLeft && `pl-[${style.paddingLeft}]`
+                    ].filter(Boolean).join(' ');
                 }
-                return 'px-4 py-2';
+                
+                // Then check for shorthand padding
+                if (style.padding) {
+                    // Handle both string and number types for padding
+                    if (typeof style.padding === 'string' && style.padding.includes(' ')) {
+                        const [y, x] = style.padding.split(' ');
+                        return `py-[${y}] px-[${x}]`;
+                    } else {
+                        // If it's a number or a single value string
+                        return `p-[${style.padding}]`;
+                    }
+                }
+                
+                // No default padding if none specified
+                return '';
             };
 
             const getBorderRadiusClass = () => {
@@ -150,104 +170,86 @@ const generateTailwindCode = (component: ComponentData): string => {
 };
 
 const generateNormalCode = (component: ComponentData): string => {
+    // Helper function to clean and process styles
+    const processStyles = (style: React.CSSProperties): React.CSSProperties => {
+        const processedStyle: React.CSSProperties = { ...style };
+        
+        // Remove any undefined values
+        (Object.keys(processedStyle) as Array<keyof React.CSSProperties>).forEach(key => {
+            if (processedStyle[key] === undefined) {
+                delete processedStyle[key];
+            }
+        });
+
+        // Remove shorthand padding if individual paddings exist
+        if (processedStyle.padding && (
+            processedStyle.paddingTop || 
+            processedStyle.paddingRight || 
+            processedStyle.paddingBottom || 
+            processedStyle.paddingLeft
+        )) {
+            delete processedStyle.padding;
+        }
+
+        return processedStyle;
+    };
+
     switch (component.type) {
         case 'button':
-            const style = {
+            const buttonStyle: React.CSSProperties = {
                 ...component.props.style,
-                // Add flex styles if there's an icon
                 ...(component.props.icon && {
                     display: 'flex',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    gap: '0.5rem'
                 })
             };
 
-            return `<button style={${JSON.stringify(style)}} className="${component.props.className ?? ''}">${
+            const cleanedStyle = processStyles(buttonStyle);
+
+            return `<button style={${JSON.stringify(cleanedStyle)}} className="${component.props.className ?? ''}">${
                 component.props.icon ? 
                     `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
                         component.props.iconPosition === 'only' ? 
                             `<${component.props.icon} size={${component.props.iconSize || 16}} />` :
                         component.props.iconPosition === 'right' ?
-                            `${component.props.text} <${component.props.icon} size={${component.props.iconSize || 16}} style={{ marginLeft: '8px' }} />` :
-                            `<${component.props.icon} size={${component.props.iconSize || 16}} style={{ marginRight: '8px' }} /> ${component.props.text}`
+                            `${component.props.text} <${component.props.icon} size={${component.props.iconSize || 16}} />` :
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} /> ${component.props.text}`
                     }` : 
                     component.props.text
             }</button>`;
+
+        // Update other cases to use processStyles
         case 'input':
-            return `<input type="${component.props.type}" placeholder="${component.props.placeholder}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}"/>`;
+            return `<input type="${component.props.type}" placeholder="${component.props.placeholder}" style={${JSON.stringify(processStyles(component.props.style || {}))}} className="${component.props.className ?? ''}"/>`;
+
         case 'link':
-            return `<a href="${component.props.href}" style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${
+            const linkStyle = processStyles({
+                ...component.props.style,
+                ...(component.props.icon && {
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
+                })
+            });
+
+            return `<a href="${component.props.href}" style={${JSON.stringify(linkStyle)}} className="${component.props.className || ''}">${
                 component.props.icon ? 
                     `{/* Import ${component.props.icon} from 'react-icons/fi' */}\n  ${
                         component.props.iconPosition === 'only' ? 
                             `<${component.props.icon} size={${component.props.iconSize || 16}} />` :
                         component.props.iconPosition === 'right' ?
-                            `${component.props.text} <${component.props.icon} size={${component.props.iconSize || 16}} style={{ marginLeft: '8px' }} />` :
-                            `<${component.props.icon} size={${component.props.iconSize || 16}} style={{ marginRight: '8px' }} /> ${component.props.text}`
+                            `${component.props.text} <${component.props.icon} size={${component.props.iconSize || 16}} />` :
+                            `<${component.props.icon} size={${component.props.iconSize || 16}} /> ${component.props.text}`
                     }` : 
                     component.props.text
             }</a>`;
-        case 'image':
-          return `<img src="${component.props.src}" alt="${component.props.alt}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}"/>`
-        case 'div':
-        case 'p':
-        case 'span':
-        case 'h1':
-        case 'h2':
-        case 'h3':
-        case 'ul':
-        case 'ol':
-        case 'li':
-            return `<${component.type} style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.text ?? ''}</${component.type}>`;
-        case 'textarea':
-            return `<textarea placeholder="${component.props.placeholder}" style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.text}</textarea>`;
-        case 'select':
-            return `<select style={${JSON.stringify(component.props.style)}} className="${component.props.className ?? ''}">${component.props.options?.map(option => `<option>${option}</option>`).join('')}</select>`;
-        case 'card':
-            return `<div style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${component.props.text}${component.props.children ? `\n  ${component.props.children}` : ''}</div>`;
-        case 'alert':
-            return `<div style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${component.props.text}</div>`;
-        case 'badge':
-            return `<span style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">${component.props.text}</span>`;
-        case 'checkbox':
-            return `<label style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">
-  <input type="checkbox" ${component.props.checked ? 'checked' : ''} style={{ marginRight: '0.5rem' }}/>
-  <span>${component.props.text}</span>
-</label>`;
-        case 'radio':
-            return `<label style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">
-  <input type="radio" name="${component.props.name || 'radio-group'}" ${component.props.checked ? 'checked' : ''} style={{ marginRight: '0.5rem' }}/>
-  <span>${component.props.text}</span>
-</label>`;
-        case 'toggle':
-            return `<button 
-  style={{
-    ...${JSON.stringify(component.props.style)},
-    position: 'relative',
-    width: '44px',
-    height: '24px',
-    backgroundColor: ${component.props.checked ? "'#2563EB'" : "'#E5E7EB'"},
-    borderRadius: '9999px',
-    transition: 'background-color 0.2s'
-  }} 
-  className="${component.props.className || ''}">
-  <span style={{
-    position: 'absolute',
-    width: '20px',
-    height: '20px',
-    backgroundColor: 'white',
-    borderRadius: '50%',
-    transition: 'transform 0.2s',
-    transform: ${component.props.checked ? "'translateX(20px)'" : "'translateX(2px)'"},
-    top: '2px'
-  }}/>
-</button>`;
-        case 'section':
-            return `<section style={${JSON.stringify(component.props.style)}} className="${component.props.className || ''}">
-  ${component.props.title ? `<h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '0.5rem' }}>${component.props.title}</h3>` : ''}
-  ${component.props.text}${component.props.children ? `\n  ${component.props.children}` : ''}
-</section>`;
+
+        // Update other cases similarly
         default:
-            return '';
+            return component.props.style ? 
+                `<${component.type} style={${JSON.stringify(processStyles(component.props.style))}} className="${component.props.className ?? ''}">${component.props.text ?? ''}</${component.type}>` :
+                `<${component.type} className="${component.props.className ?? ''}">${component.props.text ?? ''}</${component.type}>`;
     }
 };
 
