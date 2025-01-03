@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { IconType } from 'react-icons';
 import { FiSearch, FiLoader } from 'react-icons/fi';
+import * as Fi from 'react-icons/fi';
+import * as Ai from 'react-icons/ai';
+import * as Bi from 'react-icons/bi';
+import * as Bs from 'react-icons/bs';
+import * as Hi from 'react-icons/hi';
+import * as Md from 'react-icons/md';
 
 interface IconSearchProps {
     value: string;
@@ -27,23 +33,22 @@ const IconSearch: React.FC<IconSearchProps> = ({
     const [currentIconSet, setCurrentIconSet] = useState<string>('Fi');
 
     const iconSets = {
-        'Fi': () => import('react-icons/fi'),
-        'Ai': () => import('react-icons/ai'),
-        'Bi': () => import('react-icons/bi'),
-        'Bs': () => import('react-icons/bs'),
-        'Hi': () => import('react-icons/hi'),
-        'Md': () => import('react-icons/md'),
+        'Fi': Fi,
+        'Ai': Ai,
+        'Bi': Bi,
+        'Bs': Bs,
+        'Hi': Hi,
+        'Md': Md,
     };
 
-    // Load initial icon set (FiIcons)
-    useEffect(() => {
-        loadIconSet('Fi');
-    }, []);
-
-    const loadIconSet = async (prefix: string) => {
+    const loadIconSet = (prefix: string) => {
         setIsLoading(true);
         try {
-            const iconModule = await iconSets[prefix as keyof typeof iconSets]();
+            if (!iconSets[prefix as keyof typeof iconSets]) {
+                throw new Error(`Icon set ${prefix} is not available`);
+            }
+
+            const iconModule = iconSets[prefix as keyof typeof iconSets];
             const iconList = Object.entries(iconModule)
                 .filter(([name]) => name !== 'default')
                 .map(([name, component]) => ({
@@ -56,9 +61,15 @@ const IconSearch: React.FC<IconSearchProps> = ({
             setCurrentIconSet(prefix);
         } catch (error) {
             console.error('Error loading icons:', error);
+            setFilteredIcons([]);
         }
         setIsLoading(false);
     };
+
+    // Load initial icon set (FiIcons)
+    useEffect(() => {
+        loadIconSet('Fi');
+    }, []);
 
     const handleSearch = (searchTerm: string) => {
         setSearch(searchTerm);
@@ -178,17 +189,54 @@ const IconSearch: React.FC<IconSearchProps> = ({
     );
 };
 
-// Separate component for current icon to handle dynamic imports
+// Separate component for current icon to handle static imports
 const CurrentIcon: React.FC<{ icon: string; size: number }> = ({ icon, size }) => {
     const [IconComponent, setIconComponent] = useState<IconType | null>(null);
 
     useEffect(() => {
-        const loadIcon = async () => {
-            const prefix = icon.substring(0, 2);
-            const iconSet = await import(`react-icons/${prefix.toLowerCase()}`);
-            setIconComponent(iconSet[icon] as IconType);
+        const loadIcon = () => {
+            try {
+                const prefix = icon.substring(0, 2).toLowerCase();
+                const iconName = icon.slice(2);
+                let iconModule;
+                
+                // Map the icon sets
+                switch (prefix) {
+                    case 'fi':
+                        iconModule = Fi;
+                        break;
+                    case 'ai':
+                        iconModule = Ai;
+                        break;
+                    case 'bi':
+                        iconModule = Bi;
+                        break;
+                    case 'bs':
+                        iconModule = Bs;
+                        break;
+                    case 'hi':
+                        iconModule = Hi;
+                        break;
+                    case 'md':
+                        iconModule = Md;
+                        break;
+                    default:
+                        throw new Error(`Icon set ${prefix} not found`);
+                }
+
+                const IconComponent = iconModule[iconName as keyof typeof iconModule] as IconType;
+                if (IconComponent) {
+                    setIconComponent(() => IconComponent);
+                }
+            } catch (error) {
+                console.error('Error loading icon:', error);
+                setIconComponent(null);
+            }
         };
-        loadIcon();
+
+        if (icon) {
+            loadIcon();
+        }
     }, [icon]);
 
     if (!IconComponent) return null;
