@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { IconType } from 'react-icons';
 import { FiLoader } from 'react-icons/fi';
+import * as Fi from 'react-icons/fi';
+import * as Ai from 'react-icons/ai';
+import * as Bi from 'react-icons/bi';
+import * as Bs from 'react-icons/bs';
+import * as Hi from 'react-icons/hi';
+import * as Md from 'react-icons/md';
 
 const DynamicIcon: React.FC<{ 
     iconName: string; 
@@ -12,28 +18,46 @@ const DynamicIcon: React.FC<{
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const loadIcon = async () => {
+        const loadIcon = () => {
             setIsLoading(true);
             setError(null);
     
             try {
-                // Extract the prefix (e.g., "Fi" from "FiSearch")
-                const prefix = iconName.substring(0, 2);
-                const iconNameWithoutPrefix = iconName.slice(2);
-    
-                // Dynamically import the relevant icon library
-                const iconModule = await import(`react-icons/${prefix.toLowerCase()}`);
-                
-                // Access the icon
-                const Icon = iconModule[iconNameWithoutPrefix];
-                
+                const prefix = iconName.substring(0, 2).toLowerCase();
+                const name = iconName.slice(2);
+                let iconModule;
+
+                // Map the icon sets
+                switch (prefix) {
+                    case 'fi':
+                        iconModule = Fi;
+                        break;
+                    case 'ai':
+                        iconModule = Ai;
+                        break;
+                    case 'bi':
+                        iconModule = Bi;
+                        break;
+                    case 'bs':
+                        iconModule = Bs;
+                        break;
+                    case 'hi':
+                        iconModule = Hi;
+                        break;
+                    case 'md':
+                        iconModule = Md;
+                        break;
+                    default:
+                        throw new Error(`Icon set ${prefix} not found`);
+                }
+
+                const Icon = iconModule[name as keyof typeof iconModule] as IconType;
                 if (Icon) {
                     setIconComponent(() => Icon);
                 } else {
-                    throw new Error(`Icon ${iconNameWithoutPrefix} not found in ${prefix}`);
+                    throw new Error(`Icon ${name} not found in ${prefix}`);
                 }
             } catch (err) {
-                // Check if 'err' is an Error before accessing 'message'
                 if (err instanceof Error) {
                     setError(err.message);
                 } else {
@@ -52,7 +76,6 @@ const DynamicIcon: React.FC<{
             setIsLoading(false);
         }
     }, [iconName]);
-    
 
     if (isLoading) {
         return <FiLoader className="animate-spin" />;
