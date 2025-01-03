@@ -7,15 +7,23 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
     const renderComponent = () => {
         const { type, props } = component;
         
+        // Add default flex alignment styles
+        const defaultFlexStyles = {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem', // Adds consistent spacing between items
+            ...props.style
+        };
+        
         switch (type) {
             case 'button':
                 return (
-                    <button style={props.style} className={props.className}>
+                    <button style={defaultFlexStyles} className={props.className}>
                         {props.icon && props.iconPosition === 'left' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
-                                className="inline-block mr-2" 
                             />
                         )}
                         {props.iconPosition !== 'only' && props.text}
@@ -23,14 +31,12 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
-                                className="inline-block" 
                             />
                         )}
                         {props.icon && props.iconPosition === 'right' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
-                                className="inline-block ml-2" 
                             />
                         )}
                     </button>
@@ -46,31 +52,24 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
                 );
             case 'link':
                 return (
-                    <a href={props.href} style={props.style} className={props.className}>
-                        {/* Show left icon */}
+                    <a href={props.href} style={defaultFlexStyles} className={props.className}>
                         {props.icon && props.iconPosition === 'left' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
-                                className="inline-block mr-2" 
                             />
                         )}
-                        {/* Show text only if not icon-only mode */}
                         {props.iconPosition !== 'only' && props.text}
-                        {/* Show icon for icon-only mode */}
                         {props.icon && props.iconPosition === 'only' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
-                                className="inline-block" 
                             />
                         )}
-                        {/* Show right icon */}
                         {props.icon && props.iconPosition === 'right' && (
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
-                                className="inline-block ml-2" 
                             />
                         )}
                     </a>
@@ -86,12 +85,11 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
                 );
             case 'div':
                 return (
-                    <div style={props.style} className={props.className}>
+                    <div style={defaultFlexStyles} className={props.className}>
                         {props.icon && 
                             <DynamicIcon 
                                 iconName={props.icon} 
                                 size={props.iconSize || 16} 
-                                className="inline-block mr-2" 
                             />
                         }
                         {props.text}
