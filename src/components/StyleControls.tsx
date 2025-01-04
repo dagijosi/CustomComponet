@@ -3,47 +3,84 @@ import ColorPickerButton from './ColorPickerButton';
 
 interface StyleControlsProps {
     style: React.CSSProperties;
-    onStyleChange: (property: string, value: string) => void;
+    onStyleChange: (property: keyof React.CSSProperties, value: string) => void;
 }
 
 const StyleControls: React.FC<StyleControlsProps> = ({ style, onStyleChange }) => {
+    const renderInput = (label: string, property: keyof React.CSSProperties, type: string = 'text', placeholder: string = '') => (
+        <div>
+            <label className="text-xs text-gray-600 mb-1 block">{label}</label>
+            <input
+                type={type}
+                value={style[property] || ''}
+                onChange={(e) => onStyleChange(property, e.target.value)}
+                placeholder={placeholder}
+                className="w-full p-2 text-sm border rounded"
+            />
+        </div>
+    );
+
+    const renderSelect = (label: string, property: keyof React.CSSProperties, options: { value: string, label: string }[]) => (
+        <div>
+            <label className="text-xs text-gray-600 mb-1 block">{label}</label>
+            <select
+                value={style[property] || ''}
+                onChange={(e) => onStyleChange(property, e.target.value)}
+                className="w-full p-2 text-sm border rounded"
+            >
+                {options.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+            </select>
+        </div>
+    );
+
+    const renderTransformInput = () => (
+        <div>
+            <label className="text-xs text-gray-600 mb-1 block">Transform</label>
+            <select
+                value={style.transform || ''}
+                onChange={(e) => onStyleChange('transform', e.target.value)}
+                className="w-full p-2 text-sm border rounded"
+            >
+                <option value="">None</option>
+                <option value="rotate(45deg)">Rotate 45°</option>
+                <option value="rotate(90deg)">Rotate 90°</option>
+                <option value="scale(1.5)">Scale 1.5x</option>
+                <option value="scale(2)">Scale 2x</option>
+            </select>
+        </div>
+    );
+
+    const renderBorderControls = () => (
+        <div>
+            <label className="text-xs text-gray-600 mb-1 block">Border</label>
+            <select
+                value={style.border || ''}
+                onChange={(e) => onStyleChange('border', e.target.value)}
+                className="w-full p-2 text-sm border rounded"
+            >
+                <option value="">None</option>
+                <option value="1px solid">Solid</option>
+                <option value="1px dashed">Dashed</option>
+                <option value="1px dotted">Dotted</option>
+            </select>
+        </div>
+    );
+
     return (
         <div className="space-y-4">
             {/* Layout */}
             <div>
                 <h4 className="font-medium text-sm mb-2">Layout</h4>
                 <div className="grid grid-cols-2 gap-2">
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Width</label>
-                        <input
-                            type="text"
-                            value={style.width || ''}
-                            onChange={(e) => onStyleChange('width', e.target.value)}
-                            placeholder="e.g., 100px, 50%"
-                            className="w-full p-2 text-sm border rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Height</label>
-                        <input
-                            type="text"
-                            value={style.height || ''}
-                            onChange={(e) => onStyleChange('height', e.target.value)}
-                            placeholder="e.g., 100px, auto"
-                            className="w-full p-2 text-sm border rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Box Sizing</label>
-                        <select
-                            value={style.boxSizing || ''}
-                            onChange={(e) => onStyleChange('boxSizing', e.target.value)}
-                            className="w-full p-2 text-sm border rounded"
-                        >
-                            <option value="content-box">Content Box</option>
-                            <option value="border-box">Border Box</option>
-                        </select>
-                    </div>
+                    {renderInput('Width', 'width', 'text', 'e.g., 100px, 50%')}
+                    {renderInput('Height', 'height', 'text', 'e.g., 100px, auto')}
+                    {renderSelect('Box Sizing', 'boxSizing', [
+                        { value: 'content-box', label: 'Content Box' },
+                        { value: 'border-box', label: 'Border Box' }
+                    ])}
+                    {renderInput('Padding', 'padding', 'text', 'e.g., 10px')}
                 </div>
             </div>
 
@@ -51,55 +88,23 @@ const StyleControls: React.FC<StyleControlsProps> = ({ style, onStyleChange }) =
             <div>
                 <h4 className="font-medium text-sm mb-2">Typography</h4>
                 <div className="grid grid-cols-2 gap-2">
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Font Size</label>
-                        <input
-                            type="text"
-                            value={style.fontSize || ''}
-                            onChange={(e) => onStyleChange('fontSize', e.target.value)}
-                            placeholder="e.g., 16px"
-                            className="w-full p-2 text-sm border rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Font Weight</label>
-                        <select
-                            value={style.fontWeight || ''}
-                            onChange={(e) => onStyleChange('fontWeight', e.target.value)}
-                            className="w-full p-2 text-sm border rounded"
-                        >
-                            <option value="">Default</option>
-                            <option value="300">Light</option>
-                            <option value="400">Regular</option>
-                            <option value="500">Medium</option>
-                            <option value="600">Semibold</option>
-                            <option value="700">Bold</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Line Height</label>
-                        <input
-                            type="text"
-                            value={style.lineHeight || ''}
-                            onChange={(e) => onStyleChange('lineHeight', e.target.value)}
-                            placeholder="e.g., 1.5"
-                            className="w-full p-2 text-sm border rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Text Align</label>
-                        <select
-                            value={style.textAlign || ''}
-                            onChange={(e) => onStyleChange('textAlign', e.target.value)}
-                            className="w-full p-2 text-sm border rounded"
-                        >
-                            <option value="">Default</option>
-                            <option value="left">Left</option>
-                            <option value="center">Center</option>
-                            <option value="right">Right</option>
-                            <option value="justify">Justify</option>
-                        </select>
-                    </div>
+                    {renderInput('Font Size', 'fontSize', 'text', 'e.g., 16px')}
+                    {renderSelect('Font Weight', 'fontWeight', [
+                        { value: '', label: 'Default' },
+                        { value: '300', label: 'Light' },
+                        { value: '400', label: 'Regular' },
+                        { value: '500', label: 'Medium' },
+                        { value: '600', label: 'Semibold' },
+                        { value: '700', label: 'Bold' }
+                    ])}
+                    {renderInput('Line Height', 'lineHeight', 'text', 'e.g., 1.5')}
+                    {renderSelect('Text Align', 'textAlign', [
+                        { value: '', label: 'Default' },
+                        { value: 'left', label: 'Left' },
+                        { value: 'center', label: 'Center' },
+                        { value: 'right', label: 'Right' },
+                        { value: 'justify', label: 'Justify' }
+                    ])}
                 </div>
             </div>
 
@@ -124,26 +129,8 @@ const StyleControls: React.FC<StyleControlsProps> = ({ style, onStyleChange }) =
             <div>
                 <h4 className="font-medium text-sm mb-2">Border</h4>
                 <div className="grid grid-cols-2 gap-2">
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Border Radius</label>
-                        <input
-                            type="text"
-                            value={style.borderRadius || ''}
-                            onChange={(e) => onStyleChange('borderRadius', e.target.value)}
-                            placeholder="e.g., 4px"
-                            className="w-full p-2 text-sm border rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Border Width</label>
-                        <input
-                            type="text"
-                            value={style.borderWidth || ''}
-                            onChange={(e) => onStyleChange('borderWidth', e.target.value)}
-                            placeholder="e.g., 1px"
-                            className="w-full p-2 text-sm border rounded"
-                        />
-                    </div>
+                    {renderInput('Border Radius', 'borderRadius', 'text', 'e.g., 4px')}
+                    {renderInput('Border Width', 'borderWidth', 'text', 'e.g., 1px')}
                     <div className="col-span-2">
                         <ColorPickerButton
                             color={style.borderColor || '#e5e7eb'}
@@ -151,6 +138,7 @@ const StyleControls: React.FC<StyleControlsProps> = ({ style, onStyleChange }) =
                             label="Border Color"
                         />
                     </div>
+                    {renderBorderControls()}
                 </div>
             </div>
 
@@ -158,31 +146,14 @@ const StyleControls: React.FC<StyleControlsProps> = ({ style, onStyleChange }) =
             <div>
                 <h4 className="font-medium text-sm mb-2">Effects</h4>
                 <div className="grid grid-cols-2 gap-2">
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Opacity</label>
-                        <input
-                            type="number"
-                            min="0"
-                            max="1"
-                            step="0.1"
-                            value={style.opacity || '1'}
-                            onChange={(e) => onStyleChange('opacity', e.target.value)}
-                            className="w-full p-2 text-sm border rounded"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-xs text-gray-600 mb-1 block">Box Shadow</label>
-                        <select
-                            value={style.boxShadow || ''}
-                            onChange={(e) => onStyleChange('boxShadow', e.target.value)}
-                            className="w-full p-2 text-sm border rounded"
-                        >
-                            <option value="">None</option>
-                            <option value="0 1px 2px rgba(0,0,0,0.1)">Small</option>
-                            <option value="0 1px 3px rgba(0,0,0,0.12)">Medium</option>
-                            <option value="0 4px 6px rgba(0,0,0,0.1)">Large</option>
-                        </select>
-                    </div>
+                    {renderInput('Opacity', 'opacity', 'number', '1')}
+                    {renderSelect('Box Shadow', 'boxShadow', [
+                        { value: '', label: 'None' },
+                        { value: '0 1px 2px rgba(0,0,0,0.1)', label: 'Small' },
+                        { value: '0 1px 3px rgba(0,0,0,0.12)', label: 'Medium' },
+                        { value: '0 4px 6px rgba(0,0,0,0.1)', label: 'Large' }
+                    ])}
+                    {renderTransformInput()}
                 </div>
             </div>
         </div>

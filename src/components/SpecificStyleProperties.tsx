@@ -4,60 +4,95 @@ import { ComponentData } from '../types';
 interface SpecificStylePropertiesProps {
     component: ComponentData;
     localProps: any;
-    handleStyleChange: (property: string, value: string) => void;
+    handleStyleChange: (property: keyof React.CSSProperties, value: string) => void;
 }
 
 const SpecificStyleProperties: React.FC<SpecificStylePropertiesProps> = ({ component, localProps, handleStyleChange }) => {
+    const renderInput = (placeholder: string, property: keyof React.CSSProperties) => (
+        <input
+            type="text"
+            placeholder={placeholder}
+            value={localProps.style?.[property] || ""}
+            onChange={(e) => handleStyleChange(property, e.target.value)}
+            className="p-2 border rounded"
+        />
+    );
+
+    const renderSelect = (property: keyof React.CSSProperties, options: { value: string, label: string }[]) => (
+        <select
+            value={localProps.style?.[property] || ""}
+            onChange={(e) => handleStyleChange(property, e.target.value)}
+            className="p-2 border rounded"
+        >
+            {options.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+        </select>
+    );
+
+    const renderTransformInput = () => (
+        <div>
+            <label className="text-xs text-gray-600 mb-1 block">Transform</label>
+            <select
+                value={localProps.style?.transform || ''}
+                onChange={(e) => handleStyleChange('transform', e.target.value)}
+                className="w-full p-2 text-sm border rounded"
+            >
+                <option value="">None</option>
+                <option value="rotate(45deg)">Rotate 45°</option>
+                <option value="rotate(90deg)">Rotate 90°</option>
+                <option value="scale(1.5)">Scale 1.5x</option>
+                <option value="scale(2)">Scale 2x</option>
+            </select>
+        </div>
+    );
+
+    const renderBorderControls = () => (
+        <div>
+            <label className="text-xs text-gray-600 mb-1 block">Border</label>
+            <select
+                value={localProps.style?.border || ''}
+                onChange={(e) => handleStyleChange('border', e.target.value)}
+                className="w-full p-2 text-sm border rounded"
+            >
+                <option value="">None</option>
+                <option value="1px solid">Solid</option>
+                <option value="1px dashed">Dashed</option>
+                <option value="1px dotted">Dotted</option>
+            </select>
+        </div>
+    );
+
     const renderSpecificStyleProperties = () => {
         switch (component.type) {
             case 'button':
                 return (
                     <div className="grid grid-cols-2 gap-2">
-                        <input
-                            type="text"
-                            placeholder="Font Size"
-                            value={localProps.style?.fontSize || ""}
-                            onChange={(e) => handleStyleChange("fontSize", e.target.value)}
-                            className="p-2 border rounded"
-                        />
-                        <select
-                            value={localProps.style?.fontWeight || ""}
-                            onChange={(e) => handleStyleChange("fontWeight", e.target.value)}
-                            className="p-2 border rounded"
-                        >
-                            <option value="">Font Weight</option>
-                            <option value="normal">Normal</option>
-                            <option value="500">Medium</option>
-                            <option value="600">Semi Bold</option>
-                            <option value="700">Bold</option>
-                        </select>
-                        <select
-                            value={localProps.style?.boxSizing || ""}
-                            onChange={(e) => handleStyleChange("boxSizing", e.target.value)}
-                            className="p-2 border rounded"
-                        >
-                            <option value="content-box">Content Box</option>
-                            <option value="border-box">Border Box</option>
-                        </select>
+                        {renderInput("Font Size", "fontSize")}
+                        {renderSelect("fontWeight", [
+                            { value: "", label: "Font Weight" },
+                            { value: "normal", label: "Normal" },
+                            { value: "500", label: "Medium" },
+                            { value: "600", label: "Semi Bold" },
+                            { value: "700", label: "Bold" }
+                        ])}
+                        {renderSelect("boxSizing", [
+                            { value: "content-box", label: "Content Box" },
+                            { value: "border-box", label: "Border Box" }
+                        ])}
+                        {renderInput("Padding", "padding")}
+                        {renderTransformInput()}
+                        {renderBorderControls()}
                     </div>
                 );
             case 'image':
                 return (
                     <div className="grid grid-cols-2 gap-2">
-                        <input
-                            type="text"
-                            placeholder="Object Fit"
-                            value={localProps.style?.objectFit || ""}
-                            onChange={(e) => handleStyleChange("objectFit", e.target.value)}
-                            className="p-2 border rounded"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Object Position"
-                            value={localProps.style?.objectPosition || ""}
-                            onChange={(e) => handleStyleChange("objectPosition", e.target.value)}
-                            className="p-2 border rounded"
-                        />
+                        {renderInput("Object Fit", "objectFit")}
+                        {renderInput("Object Position", "objectPosition")}
+                        {renderInput("Border Radius", "borderRadius")}
+                        {renderTransformInput()}
+                        {renderBorderControls()}
                     </div>
                 );
             case 'p':
@@ -65,20 +100,17 @@ const SpecificStyleProperties: React.FC<SpecificStylePropertiesProps> = ({ compo
             case 'h2':
                 return (
                     <div className="grid grid-cols-2 gap-2">
-                        <input
-                            type="text"
-                            placeholder="Line Height"
-                            value={localProps.style?.lineHeight || ""}
-                            onChange={(e) => handleStyleChange("lineHeight", e.target.value)}
-                            className="p-2 border rounded"
-                        />
-                        <input
-                            type="text"
-                            placeholder="Letter Spacing"
-                            value={localProps.style?.letterSpacing || ""}
-                            onChange={(e) => handleStyleChange("letterSpacing", e.target.value)}
-                            className="p-2 border rounded"
-                        />
+                        {renderInput("Line Height", "lineHeight")}
+                        {renderInput("Letter Spacing", "letterSpacing")}
+                        {renderSelect("textAlign", [
+                            { value: "", label: "Text Align" },
+                            { value: "left", label: "Left" },
+                            { value: "center", label: "Center" },
+                            { value: "right", label: "Right" },
+                            { value: "justify", label: "Justify" }
+                        ])}
+                        {renderTransformInput()}
+                        {renderBorderControls()}
                     </div>
                 );
             default:
