@@ -122,6 +122,12 @@ const StyleControls: React.FC<StyleControlsProps> = ({ style, onStyleChange }) =
                         onChange={(color) => onStyleChange('color', color)}
                         label="Text Color"
                     />
+                    <button
+                        onClick={() => onStyleChange('backgroundColor', 'transparent')}
+                        className="w-full p-2 text-sm border rounded"
+                    >
+                        Make Background Transparent
+                    </button>
                 </div>
             </div>
 

@@ -5,6 +5,9 @@ const generateTailwindCode = (component: ComponentData): string => {
     const style = component.props.style || {};
 
     const getBgClasses = () => {
+        if (style.backgroundColor === 'transparent') {
+            return 'bg-transparent';
+        }
         if (typeof style.background === 'string' && style.background.includes('gradient')) {
             const gradientStr = style.background;
             let directionClass = 'bg-gradient-to-r';
@@ -122,7 +125,8 @@ const generateNormalCode = (component: ComponentData): string => {
             alignItems: 'center',
             gap: component.props.iconSpacingX || '0.5rem',
             rowGap: component.props.iconSpacingY || '0'
-        })
+        }),
+        backgroundColor: component.props.style?.backgroundColor === 'transparent' ? 'transparent' : component.props.style?.backgroundColor
     };
 
     const cleanedStyle = processStyles(buttonStyle);

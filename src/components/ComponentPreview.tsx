@@ -14,7 +14,8 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
             justifyContent: 'center',
             gap: props.iconSpacingX || '0.5rem',
             rowGap: props.iconSpacingY || '0',
-            ...props.style
+            ...props.style,
+            backgroundColor: props.style?.backgroundColor === 'transparent' ? 'transparent' : props.style?.backgroundColor
         };
         
         switch (type) {
@@ -216,4 +217,4 @@ const ComponentPreview: React.FC<{ component: ComponentData }> = ({ component })
     );
 };
 
-export default ComponentPreview; 
+export default ComponentPreview;

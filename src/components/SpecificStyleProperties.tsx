@@ -83,6 +83,12 @@ const SpecificStyleProperties: React.FC<SpecificStylePropertiesProps> = ({ compo
                         {renderInput("Padding", "padding")}
                         {renderTransformInput()}
                         {renderBorderControls()}
+                        <button
+                            onClick={() => handleStyleChange('backgroundColor', 'transparent')}
+                            className="w-full p-2 text-sm border rounded"
+                        >
+                            Make Background Transparent
+                        </button>
                     </div>
                 );
             case 'image':
@@ -93,6 +99,12 @@ const SpecificStyleProperties: React.FC<SpecificStylePropertiesProps> = ({ compo
                         {renderInput("Border Radius", "borderRadius")}
                         {renderTransformInput()}
                         {renderBorderControls()}
+                        <button
+                            onClick={() => handleStyleChange('backgroundColor', 'transparent')}
+                            className="w-full p-2 text-sm border rounded"
+                        >
+                            Make Background Transparent
+                        </button>
                     </div>
                 );
             case 'p':
@@ -111,6 +123,12 @@ const SpecificStyleProperties: React.FC<SpecificStylePropertiesProps> = ({ compo
                         ])}
                         {renderTransformInput()}
                         {renderBorderControls()}
+                        <button
+                            onClick={() => handleStyleChange('backgroundColor', 'transparent')}
+                            className="w-full p-2 text-sm border rounded"
+                        >
+                            Make Background Transparent
+                        </button>
                     </div>
                 );
             default:
