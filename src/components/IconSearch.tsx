@@ -113,7 +113,7 @@ const IconSearch: React.FC<IconSearchProps> = ({
                 </div>
 
                 {/* Icon Set Selector */}
-                <div className="mt-2 flex gap-1">
+                <div className="mt-2 flex gap-1 flex-wrap">
                     {Object.keys(iconSets).map((prefix) => (
                         <button
                             key={prefix}
@@ -146,7 +146,7 @@ const IconSearch: React.FC<IconSearchProps> = ({
                                 Loading icons...
                             </div>
                         ) : (
-                            <div className="p-2 grid grid-cols-4 gap-2">
+                            <div className="p-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
                                 {filteredIcons.map(({ name, component: Icon }) => (
                                     <button
                                         key={name}
@@ -166,7 +166,7 @@ const IconSearch: React.FC<IconSearchProps> = ({
             </div>
 
             {value && (
-                <div className="flex items-center gap-4 p-2 border rounded bg-gray-50">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-2 border rounded bg-gray-50">
                     <div className="flex items-center gap-2">
                         <label className="text-sm text-gray-600">Display:</label>
                         <select
@@ -282,4 +282,4 @@ const CurrentIcon: React.FC<{ icon: string; size: number }> = ({ icon, size }) =
     return <IconComponent size={size} className="text-gray-600" />;
 };
 
-export default IconSearch; 
+export default IconSearch;
